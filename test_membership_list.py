@@ -90,30 +90,35 @@ for n in range(1000):
         p=[0.01, *([0.2] * 4), 0.19],
     )[0]
 
-    # TODO: Block showing both as active or showing active when memb_status_letter == L
+    monthly_dues_types = [
+        "lapsed",
+        "past_due",
+        "canceled_by_processor",
+        "canceled_by_admin",
+        "canceled_by_failure",
+    ]
+    if person["membership_status"] == "Member in Good Standing":
+        monthly_dues_types.append("active")
+
     person["monthly_dues_status"] = np.random.choice(
-        [
-            "active",
-            "lapsed",
-            "past_due",
-            "canceled_by_processor",
-            "canceled_by_admin",
-            "canceled_by_failure",
-        ],
-        1,
-    )[0]
+            monthly_dues_types,
+            1,
+        )[0]
+
+    yearly_dues_types = [
+        "",
+        "never",
+        "canceled_by_user",
+        "canceled_by_processor",
+        "canceled_by_admin",
+        "canceled_by_failure",
+    ]
+    if person["membership_status"] == "Member in Good Standing":
+        yearly_dues_types.append("active")
+
     person["yearly_dues_status"] = np.random.choice(
-        [
-            "",
-            "active",
-            "never",
-            "canceled_by_user",
-            "canceled_by_processor",
-            "canceled_by_admin",
-            "canceled_by_failure",
-        ],
+        yearly_dues_types,
         1,
-        p=[0.04, *([0.16] * 6)],
     )[0]
 
     person["union_member"] = np.random.choice(
