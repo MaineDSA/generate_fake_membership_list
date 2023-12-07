@@ -1,6 +1,7 @@
 """Create test dataset for DSA membership list"""
 
 import datetime
+from zipfile import ZipFile
 import numpy as np
 import pandas as pd
 from dateutil.relativedelta import relativedelta
@@ -213,3 +214,5 @@ for n in range(1000):
 
 df = pd.DataFrame(data=people)
 df.to_csv("./test_membership_list.csv", sep=",", index=False)
+with ZipFile('./test_membership_list.zip', 'x') as list_zip:
+    list_zip.write('test_membership_list.csv')
