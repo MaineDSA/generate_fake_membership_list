@@ -214,5 +214,5 @@ for n in range(1000):
 
 df = pd.DataFrame(data=people)
 df.to_csv("./test_membership_list.csv", sep=",", index=False)
-with ZipFile('./test_membership_list.zip', 'x') as list_zip:
-    list_zip.write('test_membership_list.csv')
+with ZipFile(f"./test_membership_list_{datetime.datetime.now().date().strftime('%Y%m%d')}.zip", "x") as list_zip:
+    list_zip.write("test_membership_list.csv")
