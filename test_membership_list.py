@@ -194,7 +194,7 @@ for n in range(1000):
     person["address2"] = fake.secondary_address()
     person["city"] = fake.city()
     person["state"] = STATE_ABBR
-    person["zip"] = fake.postcode_in_state(STATE_ABBR)
+    person["zip"] = str(fake.postcode_in_state(STATE_ABBR))
     person["country"] = fake.current_country()
 
     person["actionkit_id"] = fake.unique.random_int(min=1000, max=999999)
