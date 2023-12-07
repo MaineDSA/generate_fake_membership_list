@@ -212,4 +212,4 @@ for n in range(1000):
     people.append(person)
 
 df = pd.DataFrame(data=people)
-df.to_csv("./output.csv", sep=",", index=False)
+df.to_csv("./test_membership_list.csv", sep=",", index=False)
