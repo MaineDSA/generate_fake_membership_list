@@ -60,15 +60,17 @@ for n in range(1000):
     expiration_date = fake.date_between_dates(
         date_start=(
             datetime.datetime.strptime(person["join_date"], "%Y-%m-%d").date()
-            + relativedelta(years=1)  # date must be at least 1 yr after join date but no more than one year in the future.
+            + relativedelta(
+                years=1
+            )  # date must be at least 1 yr after join date but no more than one year in the future.
         ),
         date_end=(datetime.datetime.now().date() + relativedelta(years=1)),
     ).isoformat()
     person["xdate"] = np.random.choice(
-        [expiration_date, "2099-11-01"], 1, p=[0.99, 0.01]  # Lifetime members have join date of 2099-11-01
-    )[
-        0
-    ]
+        [expiration_date, "2099-11-01"],
+        1,
+        p=[0.99, 0.01],  # Lifetime members have join date of 2099-11-01
+    )[0]
 
     person["membership_status"] = "Lapsed"
     person["memb_status_letter"] = "L"
@@ -101,9 +103,9 @@ for n in range(1000):
         monthly_dues_types.append("active")
 
     person["monthly_dues_status"] = np.random.choice(
-            monthly_dues_types,
-            1,
-        )[0]
+        monthly_dues_types,
+        1,
+    )[0]
 
     yearly_dues_types = [
         "",
@@ -113,7 +115,9 @@ for n in range(1000):
         "canceled_by_admin",
         "canceled_by_failure",
     ]
-    if person["membership_status"] == "Member in Good Standing":
+    if (person["membership_status"] == "Member in Good Standing") and (
+        person["monthly_dues_status"] != "active"
+    ):
         yearly_dues_types.append("active")
 
     person["yearly_dues_status"] = np.random.choice(
@@ -128,7 +132,7 @@ for n in range(1000):
             "Yes, retired union member",
             "No, but former union member",
             "No, not a union member",
-            "Currently organizing my workplace"
+            "Currently organizing my workplace",
         ],
         1,
         p=[0.05, *([0.19] * 5)],
@@ -219,5 +223,6 @@ for n in range(1000):
 
 df = pd.DataFrame(data=people)
 df.to_csv("./test_membership_list.csv", sep=",", index=False)
-with ZipFile(f"./test_membership_list_{datetime.datetime.now().date().strftime('%Y%m%d')}.zip", "x") as list_zip:
+todays_date = datetime.datetime.now().date().strftime('%Y%m%d')
+with ZipFile(f"./test_membership_list_{todays_date}.zip", "x") as list_zip:
     list_zip.write("test_membership_list.csv")
