@@ -220,12 +220,12 @@ for n in tqdm(range(2000), unit="comrades"):
         1,
     )[0]
 
-    person['lat'], person['lon'] = fake.local_latlng(coords_only=True)
+    person["lat"], person["lon"] = fake.local_latlng(coords_only=True)
 
     people.append(person)
 
 df = pd.DataFrame(data=people)
 df.to_csv("./test_membership_list.csv", sep=",", index=False)
-todays_date = datetime.datetime.now().date().strftime('%Y%m%d')
+todays_date = datetime.datetime.now().date().strftime("%Y%m%d")
 with ZipFile(f"./test_membership_list_{todays_date}.zip", "x") as list_zip:
     list_zip.write("test_membership_list.csv")
