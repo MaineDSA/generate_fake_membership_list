@@ -7,6 +7,7 @@ import pandas as pd
 from dateutil.relativedelta import relativedelta
 from faker import Faker
 from faker_education import SchoolProvider
+from tqdm import tqdm
 
 fake = Faker()
 fake.add_provider(SchoolProvider)
@@ -16,7 +17,7 @@ STATE_NAME = "Maine"
 
 people = []
 
-for n in range(1000):
+for n in tqdm(range(2000), unit="comrades"):
     person = {}
 
     person["first_name"] = fake.first_name()
