@@ -219,6 +219,8 @@ for n in range(1000):
         1,
     )[0]
 
+    person['lat'], person['lon'] = fake.local_latlng(coords_only=True)
+
     people.append(person)
 
 df = pd.DataFrame(data=people)
