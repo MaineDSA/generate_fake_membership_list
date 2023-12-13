@@ -8,32 +8,32 @@ With Python installed and the repo cloned, from the project root:
 
 1. create a virtual environment named `.venv`:
 
-**Mac/Linux/WSL**
+    **Mac/Linux/WSL**
 
-```
-python -m venv .venv
-```
+    ```
+    python -m venv .venv
+    ```
 
-**Windows + Powershell**
+    **Windows + Powershell**
 
-```
-py -m venv .venv
-```
+    ```
+    py -m venv .venv
+    ```
 
 2. activate the virtual envronment
 
-**Mac/Linux/WSL**
-```
-source .venv/bin/activate
-```
+    **Mac/Linux/WSL**
+    ```
+    source .venv/bin/activate
+    ```
 
-**Windows + Powershell**
-```
-.venv\Scripts\Activate.ps1
-```
+    **Windows + Powershell**
+    ```
+    .venv\Scripts\Activate.ps1
+    ```
 
 3. install your dependencies
 
-```
-pip install -r requirements.txt
-```
+    ```
+    pip install -r requirements.txt
+    ```
