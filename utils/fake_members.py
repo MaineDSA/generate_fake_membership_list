@@ -15,9 +15,7 @@ def generate_member():
     person = {}
 
     person["first_name"] = fake.first_name()
-    person["middle_name"] = np.random.choice(
-        [fake.first_name()[0] + ".", fake.first_name(), ""], 1, p=[0.08, 0.06, 0.86]
-    )[0]
+    person["middle_name"] = np.random.choice([fake.first_name()[0] + ".", fake.first_name(), ""], 1, p=[0.08, 0.06, 0.86])[0]
     person["last_name"] = fake.last_name()
 
     person["email"] = fake.email()
@@ -25,12 +23,8 @@ def generate_member():
     person["do_not_call"] = np.random.choice(["True", ""], 1, p=[0.08, 0.92])[0]
     person["p2ptext_optout"] = np.random.choice(["TRUE", ""], 1, p=[0.16, 0.84])[0]
 
-    person["mobile_phone"] = np.random.choice(
-        [fake.basic_phone_number(), ""], 1, p=[0.7, 0.3]
-    )[0]
-    person["home_phone"] = np.random.choice(
-        [fake.basic_phone_number(), ""], 1, p=[0.5, 0.5]
-    )[0]
+    person["mobile_phone"] = np.random.choice([fake.basic_phone_number(), ""], 1, p=[0.7, 0.3])[0]
+    person["home_phone"] = np.random.choice([fake.basic_phone_number(), ""], 1, p=[0.5, 0.5])[0]
     person["work_phone"] = ""
     person["best_phone"] = next(
         (
@@ -46,19 +40,14 @@ def generate_member():
     )
 
     person["join_date"] = fake.past_date(start_date="-15y").isoformat()
-    person[
-        "join_date"
-    ] = fake.date_between_dates(  # date must be between 1982-06-01 and today.
+    person["join_date"] = fake.date_between_dates(  # date must be between 1982-06-01 and today.
         date_start=(datetime.datetime.strptime("1982-06-01", "%Y-%m-%d").date()),
         date_end=(datetime.datetime.now().date()),
     ).isoformat()
     expiration_date = fake.date_between_dates(
         date_start=(
-            datetime.datetime.strptime(person["join_date"], "%Y-%m-%d").date()
-            + relativedelta(
-                years=1
-            )  # date must be at least 1 yr after join date but no more than one year in the future.
-        ),
+            datetime.datetime.strptime(person["join_date"], "%Y-%m-%d").date() + relativedelta(years=1)
+        ),  # date must be at least 1 yr after join date but no more than one year in the future.
         date_end=(datetime.datetime.now().date() + relativedelta(years=1)),
     ).isoformat()
     person["xdate"] = np.random.choice(
@@ -69,15 +58,10 @@ def generate_member():
 
     person["membership_status"] = "Lapsed"
     person["memb_status_letter"] = "L"
-    if (
-        datetime.datetime.strptime(person["xdate"], "%Y-%m-%d").date()
-        >= datetime.datetime.now().date()
-    ):
+    if datetime.datetime.strptime(person["xdate"], "%Y-%m-%d").date() >= datetime.datetime.now().date():
         person["membership_status"] = "Member in Good Standing"
         person["memb_status_letter"] = "M"
-    elif datetime.datetime.strptime(person["xdate"], "%Y-%m-%d").date() > (
-        datetime.datetime.now().date() - relativedelta(years=1)
-    ):
+    elif datetime.datetime.strptime(person["xdate"], "%Y-%m-%d").date() > (datetime.datetime.now().date() - relativedelta(years=1)):
         person["membership_status"] = "Member"
         person["memb_status_letter"] = "M"
 
@@ -110,9 +94,7 @@ def generate_member():
         "canceled_by_admin",
         "canceled_by_failure",
     ]
-    if (person["membership_status"] == "Member in Good Standing") and (
-        person["monthly_dues_status"] != "active"
-    ):
+    if (person["membership_status"] == "Member in Good Standing") and (person["monthly_dues_status"] != "active"):
         yearly_dues_types.append("active")
 
     person["yearly_dues_status"] = np.random.choice(
