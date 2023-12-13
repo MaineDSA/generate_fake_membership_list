@@ -4,6 +4,7 @@ import random
 from pathlib import Path
 from faker import Faker
 from mapbox import Geocoder
+from ratelimit import limits, sleep_and_retry
 
 fake = Faker()
 geocoder = Geocoder(access_token=Path(".mapbox_token").read_text(encoding="UTF-8"))
@@ -21,6 +22,8 @@ def get_fake_address():
         "country": "US"
     }
 
+@sleep_and_retry
+@limits(calls=600, period=60)
 def get_random_business_address(zip_code, category='poi'):
     """Find the address of a random business within a provided zip code"""
     response = geocoder.forward(zip_code, types=[category], country=["us"])
@@ -47,6 +50,8 @@ def get_random_business_address(zip_code, category='poi'):
 
     return None
 
+@sleep_and_retry
+@limits(calls=600, period=60)
 def get_random_realistic_address(zip_code):
     """Find a random address within a provided zip code"""
     response = geocoder.forward(zip_code, country=["us"])
@@ -75,6 +80,8 @@ def get_random_realistic_address(zip_code):
                         "city": next((item['text'] for item in random_location['context'] if item['id'].startswith('place.')), ""),
                         "state": next((item['text'] for item in random_location['context'] if item['id'].startswith('region.')), ""),
                         "zip": next((item['text'] for item in random_location['context'] if item['id'].startswith('postcode.')), ""),
+                        "lat": latitude,
+                        "lon": longitude
                     }
                     return address
 
