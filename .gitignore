@@ -1,4 +1,6 @@
-test_membership_list.pkl
+# Inputs, Outputs, Private Data
+.mapbox_token
+*.pkl
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
