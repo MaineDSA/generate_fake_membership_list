@@ -1,9 +1,12 @@
 """Multiple methods of faking addresses, some relying on API access."""
 
 import random
+from pathlib import Path
 from faker import Faker
+from mapbox import Geocoder
 
 fake = Faker()
+geocoder = Geocoder(access_token=Path(".mapbox_token").read_text(encoding="UTF-8"))
 
 # Geocoding API rate limit of 600 req/min https://docs.mapbox.com/api/overview/
 
@@ -18,17 +21,14 @@ def get_fake_address():
         "country": "US"
     }
 
-def get_random_business_address(zip_code, mapbox_access_token, category='poi'):
-    poi_url = f"https://api.mapbox.com/geocoding/v5/mapbox.places/{zip_code}.json?country=US&types={category}&access_token={mapbox_access_token}"
-    print(poi_url)
-    response = requests.get(poi_url)
-    print("response: ", response.json())
+def get_random_business_address(zip_code, category='poi'):
+    """Find the address of a random business within a provided zip code"""
+    response = geocoder.forward(zip_code, types=[category], country=["us"])
     if response.status_code == 200:
         data = response.json()
-        features = data['features']
-        
-        if features:
-            place = features[0]  # Retrieve the first business found
+        print("response: ", response.json())
+        if "features" in data:
+            place = data['features'][0]  # Retrieve the first business found
             properties = place['properties']
             context = place.get('context', [])
             address = [item['text'] for item in context if item['id'].startswith('address')]
@@ -42,34 +42,29 @@ def get_random_business_address(zip_code, mapbox_access_token, category='poi'):
                 "zip": properties.get('address', {}).get('postcode', ""),
                 "country": properties.get('address', {}).get('country', "")
             }
-            
+
             return business_address
-    
+
     return None
 
-def get_random_realistic_address(zip_code, mapbox_token):
-    # Get coordinates within the provided ZIP code
-    geocoding_url = f"https://api.mapbox.com/geocoding/v5/mapbox.places/{zip_code}.json?country=US&types=postcode&access_token={mapbox_token}"
-    response = requests.get(geocoding_url)
+def get_random_realistic_address(zip_code):
+    """Find a random address within a provided zip code"""
+    response = geocoder.forward(zip_code, country=["us"])
 
     if response.status_code == 200:
         data = response.json()
-        features = data['features']
-
-        if features:
-            random_location = random.choice(features)
+        if "features" in data:
+            random_location = random.choice(data["features"])
             latitude, longitude = random_location['center']
             print("latitude: ", latitude)
             print("longitude: ", longitude)
 
             # Get a random realistic address based on the random coordinates
-            reverse_geocoding_url = f"https://api.mapbox.com/geocoding/v5/mapbox.places/{latitude},{longitude}.json?access_token={mapbox_token}"
-            response = requests.get(reverse_geocoding_url)
+            response = geocoder.reverse(lon=longitude, lat=latitude)
             print("reverse_geocoding_request: ", response.status_code)
             if response.status_code == 200:
                 data = response.json()
-                features = data['features']
-                address_features = [feature for feature in features if 'address' in feature['place_type']]
+                address_features = [feature for feature in data["features"] if 'address' in feature['place_type']]
 
                 if address_features:
                     random_location = random.choice(address_features)

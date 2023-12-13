@@ -3,6 +3,7 @@
 import argparse
 import random
 import datetime
+from pathlib import Path
 from zipfile import ZipFile
 import pandas as pd
 from tqdm import tqdm
@@ -18,21 +19,18 @@ def main():
     parser.add_argument('-n', help='Number of addresses to generate', default=10, type=int)
     parser.add_argument('--output', help='Output file name', default='fake-members.csv')
     parser.add_argument('--real-address-zips', help='Generate real addresses for these zip codes (comma-separated)')
-    parser.add_argument('--mapbox-token', help='Mapbox API key (required for real addresses)')
-
 
     args = parser.parse_args()
 
     # Access options using args.option1, args.option2, etc.
     print(args)
-  
 
     people = []
     for _n in tqdm(range(args.n), unit="comrades", leave=False):
         person = generate_member()
-        if args.mapbox_token and args.real_address_zips:
+        if Path(".mapbox_token") and args.real_address_zips:
             zip_code = random.choice(args.real_address_zips.split(","))
-            realistic_address = get_random_realistic_address(zip_code, args.mapbox_token)
+            realistic_address = get_random_realistic_address(zip_code)
             if realistic_address:
                 person.update(realistic_address)
             else:
