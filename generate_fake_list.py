@@ -1,3 +1,5 @@
+"""Create test dataset for DSA membership list"""
+
 import argparse
 import datetime
 from zipfile import ZipFile
@@ -8,6 +10,7 @@ from utils.fake_members import generate_member
 from utils.fake_addresses import get_random_realistic_address, get_fake_address
 
 def main():
+    """Write a test dataset to file, both as CSV and zipped CSV"""
     parser = argparse.ArgumentParser(description='Member list generator')
     parser.add_argument('--chapter-name', help='Chapter name', default="Heaven")
     parser.add_argument('--y-chapter-name', help='Young chapter name', default="")
@@ -47,4 +50,4 @@ def main():
     #     list_zip.write("test_membership_list.csv")
 
 if __name__ == "__main__":
-        main()
+    main()

@@ -1,4 +1,5 @@
-import requests
+"""Multiple methods of faking addresses, some relying on API access."""
+
 import random
 from faker import Faker
 
@@ -7,6 +8,7 @@ fake = Faker()
 # Geocoding API rate limit of 600 req/min https://docs.mapbox.com/api/overview/
 
 def get_fake_address():
+    """Create an entirely made-up address"""
     return {
         "address1": fake.building_number() + " " + fake.street_name(),
         "address2": fake.secondary_address(),

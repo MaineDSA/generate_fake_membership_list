@@ -1,9 +1,7 @@
-"""Create test dataset for DSA membership list"""
+"""Creates a dict of information for a single fake DSA member keyed to the column names found in nationally-provided membership lists, with the exception of an address"""
 
 import datetime
-from zipfile import ZipFile
 import numpy as np
-import pandas as pd
 from dateutil.relativedelta import relativedelta
 from faker import Faker
 from faker_education import SchoolProvider
@@ -11,8 +9,8 @@ from faker_education import SchoolProvider
 fake = Faker()
 fake.add_provider(SchoolProvider)
 
-
 def generate_member():
+    """Creates a dict of information for a single fake DSA member keyed to the column names found in nationally-provided membership lists, with the exception of an address"""
     person = {}
 
     person["first_name"] = fake.first_name()
@@ -209,7 +207,5 @@ def generate_member():
         ],
         1,
     )[0]
+
     return person
-
-
-
