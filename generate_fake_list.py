@@ -14,10 +14,10 @@ from utils.fake_addresses import get_random_realistic_address, get_fake_address
 def main():
     """Write a test dataset to file, both as CSV and zipped CSV"""
     parser = argparse.ArgumentParser(description='Member list generator')
-    parser.add_argument('--chapter-name', help='Chapter name', default="Heaven")
-    parser.add_argument('--y-chapter-name', help='Young chapter name', default="")
+    parser.add_argument('--chapter-name', help='Chapter name', default="Maine")
+    parser.add_argument('--y-chapter-name', help='Youth chapter name', default="")
     parser.add_argument('-n', help='Number of addresses to generate', default=10, type=int)
-    parser.add_argument('--output', help='Output file name', default='fake-members.csv')
+    parser.add_argument('--output', help='Output file name', default='fake_membership_list')
     parser.add_argument('--real-address-zips', help='Generate real addresses for these zip codes (comma-separated)')
 
     args = parser.parse_args()
@@ -40,13 +40,14 @@ def main():
             person.update(get_fake_address())
         people.append(person)
 
-  
     df = pd.DataFrame(data=people)
     todays_date = datetime.datetime.now().date().strftime('%Y%m%d')
-    df.to_csv(f"./{args.output}-{todays_date}", sep=",", index=False)
-    
-    # with ZipFile(f"./test_membership_list_{todays_date}.zip", "x") as list_zip:
-    #     list_zip.write("test_membership_list.csv")
+    filename_and_date = f"{args.output}_{todays_date}"
+    df.to_csv(f"./{filename_and_date}.csv", sep=",", index=False)
+
+    Path(f"./{filename_and_date}.zip").unlink()
+    with ZipFile(f"./{filename_and_date}.zip", "x") as list_zip:
+        list_zip.write(f"./{filename_and_date}.csv", arcname=f"{args.output}.csv")
 
 if __name__ == "__main__":
     main()
