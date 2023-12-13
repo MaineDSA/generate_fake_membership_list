@@ -9,6 +9,7 @@ from faker_education import SchoolProvider
 fake = Faker()
 fake.add_provider(SchoolProvider)
 
+
 def generate_member():
     """Creates a dict of information for a single fake DSA member keyed to the column names found in nationally-provided membership lists, with the exception of an address"""
     person = {}
@@ -193,7 +194,6 @@ def generate_member():
         ],
         1,
     )[0]
-
 
     person["actionkit_id"] = fake.unique.random_int(min=1000, max=999999)
 
