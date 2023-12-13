@@ -31,7 +31,6 @@ def get_random_business_address(zip_code, category="poi"):
     response = geocoder.forward(zip_code, types=[category], country=["us"])
     if response.status_code == 200:
         data = response.json()
-        print("response: ", response.json())
         if "features" in data:
             place = data["features"][0]  # Retrieve the first business found
             properties = place["properties"]
@@ -63,20 +62,16 @@ def get_random_realistic_address(zip_code):
         data = response.json()
         if "features" in data:
             random_location = random.choice(data["features"])
-            latitude, longitude = random_location["center"]
-            print("latitude: ", latitude)
-            print("longitude: ", longitude)
+            longitude, latitude = random_location["center"]
 
             # Get a random realistic address based on the random coordinates
             response = geocoder.reverse(lon=longitude, lat=latitude)
-            print("reverse_geocoding_request: ", response.status_code)
             if response.status_code == 200:
                 data = response.json()
                 address_features = [feature for feature in data["features"] if "address" in feature["place_type"]]
 
                 if address_features:
                     random_location = random.choice(address_features)
-                    print(random_location)
                     address = {
                         "address1": f"{random_location['address']} {random_location['text']}",
                         "address2": "",

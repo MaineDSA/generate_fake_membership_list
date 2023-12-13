@@ -15,9 +15,9 @@ fake.add_provider(SchoolProvider)
 
 def generate_member():
     """
-	Creates a dict of information for a single fake DSA member keyed to the column names
-	found in nationally-provided membership lists, with the exception of an address
-	"""
+    Creates a dict of information for a single fake DSA member keyed to the column names
+    found in nationally-provided membership lists, with the exception of an address
+    """
     person = {}
 
     person["first_name"] = fake.first_name()
