@@ -34,7 +34,7 @@ def main():
     print(args)
 
     people = []
-    for _n in tqdm(range(args.n), unit="comrades", leave=False):
+    for _n in tqdm(range(args.n), unit="comrades"):
         person = generate_member()
         if Path(".mapbox_token") and args.real_address_zips:
             zip_code = random.choice(args.real_address_zips.split(","))
