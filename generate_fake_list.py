@@ -1,10 +1,11 @@
 """Create test dataset for DSA membership list"""
 
 import argparse
+import random
 import datetime
 from zipfile import ZipFile
 import pandas as pd
-import random
+from tqdm import tqdm
 
 from utils.fake_members import generate_member
 from utils.fake_addresses import get_random_realistic_address, get_fake_address
@@ -27,7 +28,7 @@ def main():
   
 
     people = []
-    for _n in range(args.n):
+    for _n in tqdm(range(args.n), unit="comrades", leave=False):
         person = generate_member()
         if args.mapbox_token and args.real_address_zips:
             zip_code = random.choice(args.real_address_zips.split(","))
