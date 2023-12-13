@@ -53,7 +53,8 @@ def main():
     filename_and_date = f"{args.output}_{todays_date}"
     df.to_csv(f"./{filename_and_date}.csv", sep=",", index=False)
 
-    Path(f"./{filename_and_date}.zip").unlink()
+    if Path(f"./{filename_and_date}.zip").is_file():
+        Path(f"./{filename_and_date}.zip").unlink()
     with ZipFile(f"./{filename_and_date}.zip", "x") as list_zip:
         list_zip.write(f"./{filename_and_date}.csv", arcname=f"{args.output}.csv")
 
