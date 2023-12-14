@@ -15,42 +15,40 @@ from utils.fake_addresses import get_random_realistic_address, get_fake_address
 def main():
     """Write a test dataset to file, both as CSV and zipped CSV"""
     parser = argparse.ArgumentParser(description="Member list generator")
-    parser.add_argument("--chapter-name", help="Chapter name", default="Maine")
-    parser.add_argument("--y-chapter-name", help="Youth chapter name", default="")
-    parser.add_argument("-n", help="Number of addresses to generate", default=10, type=int)
-    parser.add_argument("--output", help="Output file name", default="fake_membership_list")
-    group = parser.add_mutually_exclusive_group()
-    group.add_argument(
-        "--chapter-addresses",
-        help="Generate real addresses for the specified chapter (see ./dsa_chapter_zip_codes/chapter_zips.csv)",
+    parser.add_argument(
+        "--dsa-chapter",
+        help="DSA Chapter Name\nGenerate real addresses for the specified chapter.\nSee ./dsa_chapter_zip_codes/chapter_zips.csv",
+        type=str,
+        default="Maine",
     )
-    group.add_argument(
-        "--zip-addresses",
+    parser.add_argument("--ydsa-chapter", help="yDSA Chapter Name\n", type=str, default="")
+    parser.add_argument(
+        "--zips",
         help="Generate real addresses based on zip codes (comma-separated)",
+        action="extend",
+        nargs="+",
+        type=str,
     )
+    parser.add_argument("-size", help="List Size\nThe number of fake members to be generated.", type=int, default=10)
+    parser.add_argument("--output", help="Output File Names\nThe name to use for the generated files.", type=str, default="fake_membership_list")
 
     args = parser.parse_args()
 
-    # Access options using args.option1, args.option2, etc.
-    print(args)
-
-    manual_zip_codes = []
-    if args.zip_addresses:
-        manual_zip_codes = list(args.zip_addresses.split(","))
+    # print(args)
 
     chapter_zip_codes = []
-    if args.chapter_addresses and Path("./dsa_chapter_zip_codes/chapter_zips.csv"):
+    if args.dsa_chapter and Path("./dsa_chapter_zip_codes/chapter_zips.csv"):
         df = pd.read_csv("./dsa_chapter_zip_codes/chapter_zips.csv")
-        chapter_zip_codes = list(df.loc[df["chapter"] == args.chapter_addresses]["zip"])
+        chapter_zip_codes = list(df.loc[df["chapter"] == args.dsa_chapter]["zip"])
         chapter_zip_codes = [str(zip_code).zfill(5) for zip_code in chapter_zip_codes]
 
     people = []
-    for _n in tqdm(range(args.n), unit="comrades"):
+    for _n in tqdm(range(args.size), unit="comrades"):
         person = generate_member()
         if not Path(".mapbox_token"):
             person.update(get_fake_address())
-        elif manual_zip_codes or chapter_zip_codes:
-            zip_code = random.choice(manual_zip_codes or chapter_zip_codes)
+        elif args.zips or chapter_zip_codes:
+            zip_code = random.choice(args.zips or chapter_zip_codes)
             realistic_address = get_random_realistic_address(zip_code)
             if realistic_address:
                 person.update(realistic_address)
