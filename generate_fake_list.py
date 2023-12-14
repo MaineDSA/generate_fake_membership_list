@@ -9,7 +9,7 @@ import pandas as pd
 from tqdm import tqdm
 
 from utils.fake_members import generate_member
-from utils.fake_addresses import get_random_realistic_address, get_fake_address
+from utils.fake_addresses import get_random_realistic_address, get_random_business_address, get_fake_address
 
 
 def main():
@@ -54,7 +54,13 @@ def main():
                 person.update(realistic_address)
             else:
                 print("No realistic address found for zip code: ", zip_code, "...")
-                break
+                business_address = get_random_business_address(zip_code)
+                if business_address:
+                    person.update(business_address)
+                else:
+                    print("No business addresses found for zip code: ", zip_code, "...")
+                    person.update(get_fake_address())
+
         person["dsa_chapter"] = args.dsa_chapter
         person["ydsa_chapter"] = args.ydsa_chapter
         people.append(person)

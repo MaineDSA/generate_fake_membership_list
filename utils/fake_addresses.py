@@ -31,7 +31,7 @@ def get_random_business_address(zip_code, category="poi"):
     response = geocoder.forward(zip_code, types=[category], country=["us"])
     if response.status_code == 200:
         data = response.json()
-        if "features" in data:
+        if ("features" in data) and (len(data["features"]) > 0):
             place = data["features"][0]  # Retrieve the first business found
             properties = place["properties"]
             context = place.get("context", [])
