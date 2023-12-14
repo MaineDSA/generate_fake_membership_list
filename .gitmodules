@@ -1,0 +1,3 @@
+[submodule "dsa_chapter_zip_codes"]
+	path = dsa_chapter_zip_codes
+	url = https://github.com/MaineDSA/dsa_chapter_zip_codes
