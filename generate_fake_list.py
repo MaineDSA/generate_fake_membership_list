@@ -55,6 +55,8 @@ def main():
             else:
                 print("No realistic address found for zip code: ", zip_code, "...")
                 break
+        person["dsa_chapter"] = args.dsa_chapter
+        person["ydsa_chapter"] = args.ydsa_chapter
         people.append(person)
 
     df = pd.DataFrame(data=people)
