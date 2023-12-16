@@ -56,27 +56,27 @@ def get_random_business_address(zip_code, category="poi"):
 @limits(calls=600, period=60)
 def get_random_realistic_address(zip_code):
     """Find a random address within a provided zip code"""
-    response = geocoder.forward(zip_code, country=["us"])
+    response_forward = geocoder.forward(zip_code, country=["us"])
 
-    if response.status_code != 200:
+    if response_forward.status_code != 200:
         return None
 
-    data = response.json()
-    if "features" not in data:
+    data_forward = response_forward.json()
+    if "features" not in data_forward:
         return None
 
-    random_location = random.choice(data["features"])
+    random_location = random.choice(data_forward["features"])
     longitude, latitude = random_location["center"]
 
     # Get a random realistic address based on the random coordinates
-    response = geocoder.reverse(lon=longitude, lat=latitude)
-    if response.status_code != 200:
+    response_reverse = geocoder.reverse(lon=longitude, lat=latitude)
+    if response_reverse.status_code != 200:
         return None
 
-    data = response.json()
+    data_reverse = response_reverse.json()
 
     address_features = [
-        feature for feature in data["features"] if "address" in feature["place_type"]
+        feature for feature in data_reverse["features"] if "address" in feature["place_type"]
     ]
     if not address_features:
         return None
