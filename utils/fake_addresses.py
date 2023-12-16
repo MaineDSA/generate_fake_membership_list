@@ -75,9 +75,7 @@ def get_random_realistic_address(zip_code) -> dict:
 
     data_reverse = response_reverse.json()
 
-    address_features = [
-        feature for feature in data_reverse["features"] if "address" in feature["place_type"]
-    ]
+    address_features = [feature for feature in data_reverse["features"] if "address" in feature["place_type"]]
     if not address_features:
         return None
 
@@ -89,27 +87,15 @@ def get_random_realistic_address(zip_code) -> dict:
         "address1": f"{random_location['address']} {random_location['text']}",
         "address2": "",
         "city": next(
-            (
-                item["text"]
-                for item in random_location["context"]
-                if item["id"].startswith("place.")
-            ),
+            (item["text"] for item in random_location["context"] if item["id"].startswith("place.")),
             "",
         ),
         "state": next(
-            (
-                item["text"]
-                for item in random_location["context"]
-                if item["id"].startswith("region.")
-            ),
+            (item["text"] for item in random_location["context"] if item["id"].startswith("region.")),
             "",
         ),
         "zip": next(
-            (
-                item["text"]
-                for item in random_location["context"]
-                if item["id"].startswith("postcode.")
-            ),
+            (item["text"] for item in random_location["context"] if item["id"].startswith("postcode.")),
             "",
         ),
         "lat": latitude,

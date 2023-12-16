@@ -34,10 +34,12 @@ def generate_member() -> dict:
     member["work_phone"] = ""
     member["best_phone"] = max(
         [
-                member["mobile_phone"],
-                member["home_phone"],
-                member["work_phone"],
-        ], key=bool, default=""
+            member["mobile_phone"],
+            member["home_phone"],
+            member["work_phone"],
+        ],
+        key=bool,
+        default="",
     )
 
     member["join_date"] = fake.date_between_dates(  # date must be between 1982-06-01 and today.
