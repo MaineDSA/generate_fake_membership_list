@@ -13,60 +13,59 @@ fake = Faker()
 fake.add_provider(SchoolProvider)
 
 
-def generate_member():
+def generate_member() -> dict:
     """
     Creates a dict of information for a single fake DSA member keyed to the column names
     found in nationally-provided membership lists, with the exception of an address
     """
-    person = {}
+    member = {}
 
-    person["first_name"] = fake.first_name()
-    person["middle_name"] = np.random.choice([fake.first_name()[0] + ".", fake.first_name(), ""], 1, p=[0.08, 0.06, 0.86])[0]
-    person["last_name"] = fake.last_name()
+    member["first_name"] = fake.first_name()
+    member["middle_name"] = np.random.choice([fake.first_name()[0] + ".", fake.first_name(), ""], 1, p=[0.08, 0.06, 0.86])[0]
+    member["last_name"] = fake.last_name()
 
-    person["email"] = fake.email()
+    member["email"] = fake.email()
 
-    person["do_not_call"] = np.random.choice(["True", ""], 1, p=[0.08, 0.92])[0]
-    person["p2ptext_optout"] = np.random.choice(["TRUE", ""], 1, p=[0.16, 0.84])[0]
+    member["do_not_call"] = np.random.choice(["True", ""], 1, p=[0.08, 0.92])[0]
+    member["p2ptext_optout"] = np.random.choice(["TRUE", ""], 1, p=[0.16, 0.84])[0]
 
-    person["mobile_phone"] = np.random.choice([fake.basic_phone_number(), ""], 1, p=[0.7, 0.3])[0]
-    person["home_phone"] = np.random.choice([fake.basic_phone_number(), ""], 1, p=[0.5, 0.5])[0]
-    person["work_phone"] = ""
-    person["best_phone"] = max(
+    member["mobile_phone"] = np.random.choice([fake.basic_phone_number(), ""], 1, p=[0.7, 0.3])[0]
+    member["home_phone"] = np.random.choice([fake.basic_phone_number(), ""], 1, p=[0.5, 0.5])[0]
+    member["work_phone"] = ""
+    member["best_phone"] = max(
         [
-                person["mobile_phone"],
-                person["home_phone"],
-                person["work_phone"],
+                member["mobile_phone"],
+                member["home_phone"],
+                member["work_phone"],
         ], key=bool, default=""
     )
 
-    person["join_date"] = fake.past_date(start_date="-15y").isoformat()
-    person["join_date"] = fake.date_between_dates(  # date must be between 1982-06-01 and today.
+    member["join_date"] = fake.date_between_dates(  # date must be between 1982-06-01 and today.
         date_start=(datetime.datetime.strptime("1982-06-01", "%Y-%m-%d").date()),
         date_end=(datetime.datetime.now().date()),
     ).isoformat()
     expiration_date = fake.date_between_dates(
         date_start=(
-            datetime.datetime.strptime(person["join_date"], "%Y-%m-%d").date() + relativedelta(years=1)
+            datetime.datetime.strptime(member["join_date"], "%Y-%m-%d").date() + relativedelta(years=1)
         ),  # date must be at least 1 yr after join date but no more than one year in the future.
         date_end=(datetime.datetime.now().date() + relativedelta(years=1)),
     ).isoformat()
-    person["xdate"] = np.random.choice(
+    member["xdate"] = np.random.choice(
         [expiration_date, "2099-11-01"],
         1,
         p=[0.99, 0.01],  # Lifetime members have join date of 2099-11-01
     )[0]
 
-    person["membership_status"] = "Lapsed"
-    person["memb_status_letter"] = "L"
-    if datetime.datetime.strptime(person["xdate"], "%Y-%m-%d").date() >= datetime.datetime.now().date():
-        person["membership_status"] = "Member in Good Standing"
-        person["memb_status_letter"] = "M"
-    elif datetime.datetime.strptime(person["xdate"], "%Y-%m-%d").date() > (datetime.datetime.now().date() - relativedelta(years=1)):
-        person["membership_status"] = "Member"
-        person["memb_status_letter"] = "M"
+    member["membership_status"] = "Lapsed"
+    member["memb_status_letter"] = "L"
+    if datetime.datetime.strptime(member["xdate"], "%Y-%m-%d").date() >= datetime.datetime.now().date():
+        member["membership_status"] = "Member in Good Standing"
+        member["memb_status_letter"] = "M"
+    elif datetime.datetime.strptime(member["xdate"], "%Y-%m-%d").date() > (datetime.datetime.now().date() - relativedelta(years=1)):
+        member["membership_status"] = "Member"
+        member["memb_status_letter"] = "M"
 
-    person["membership_type"] = np.random.choice(
+    member["membership_type"] = np.random.choice(
         ["", "one-time", "yearly", "annual", "monthly", "income-based"],
         1,
         p=[0.01, *([0.2] * 4), 0.19],
@@ -79,10 +78,10 @@ def generate_member():
         "canceled_by_admin",
         "canceled_by_failure",
     ]
-    if person["membership_status"] == "Member in Good Standing":
+    if member["membership_status"] == "Member in Good Standing":
         monthly_dues_types.append("active")
 
-    person["monthly_dues_status"] = np.random.choice(
+    member["monthly_dues_status"] = np.random.choice(
         monthly_dues_types,
         1,
     )[0]
@@ -95,15 +94,15 @@ def generate_member():
         "canceled_by_admin",
         "canceled_by_failure",
     ]
-    if (person["membership_status"] == "Member in Good Standing") and (person["monthly_dues_status"] != "active"):
+    if (member["membership_status"] == "Member in Good Standing") and (member["monthly_dues_status"] != "active"):
         yearly_dues_types.append("active")
 
-    person["yearly_dues_status"] = np.random.choice(
+    member["yearly_dues_status"] = np.random.choice(
         yearly_dues_types,
         1,
     )[0]
 
-    person["union_member"] = np.random.choice(
+    member["union_member"] = np.random.choice(
         [
             "",
             "Yes, current union member",
@@ -115,10 +114,10 @@ def generate_member():
         1,
         p=[0.05, *([0.19] * 5)],
     )[0]
-    person["union_name"] = ""
-    person["union_local"] = ""
-    if person["union_member"].find("Yes") == 0:
-        person["union_name"] = np.random.choice(
+    member["union_name"] = ""
+    member["union_local"] = ""
+    if member["union_member"].find("Yes") == 0:
+        member["union_name"] = np.random.choice(
             [
                 "",
                 "NEA",
@@ -135,11 +134,11 @@ def generate_member():
             1,
             p=[0.1, *([0.09] * 10)],
         )[0]
-        person["union_local"] = fake.random_int(min=5, max=5999)
+        member["union_local"] = fake.random_int(min=5, max=5999)
 
-    person["accomodations"] = ""
+    member["accomodations"] = ""
 
-    person["race"] = np.random.choice(
+    member["race"] = np.random.choice(
         [
             "Asian",
             "Black / of African Descent",
@@ -155,7 +154,7 @@ def generate_member():
         1,
     )[0]
 
-    person["student_yes_no"] = np.random.choice(
+    member["student_yes_no"] = np.random.choice(
         [
             "",
             "No",
@@ -165,11 +164,11 @@ def generate_member():
         ],
         1,
     )[0]
-    person["student_school_name"] = ""
-    if person["student_yes_no"].find("Yes") == 0:
-        person["student_school_name"] = fake.school_name()
+    member["student_school_name"] = ""
+    if member["student_yes_no"].find("Yes") == 0:
+        member["student_school_name"] = fake.school_name()
 
-    person["mailing_pref"] = np.random.choice(
+    member["mailing_pref"] = np.random.choice(
         [
             "Yes",
             "No",
@@ -178,12 +177,12 @@ def generate_member():
         1,
     )[0]
 
-    person["actionkit_id"] = fake.unique.random_int(min=1000, max=999999)
+    member["actionkit_id"] = fake.unique.random_int(min=1000, max=999999)
 
-    person["dsa_chapter"] = ""
-    person["ydsa_chapter"] = ""
+    member["dsa_chapter"] = ""
+    member["ydsa_chapter"] = ""
 
-    person["congressional_district"] = np.random.choice(
+    member["congressional_district"] = np.random.choice(
         [
             "ME_01",
             "ME_02",
@@ -191,4 +190,4 @@ def generate_member():
         1,
     )[0]
 
-    return person
+    return member

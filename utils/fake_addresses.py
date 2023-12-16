@@ -12,7 +12,7 @@ geocoder = Geocoder(access_token=Path(".mapbox_token").read_text(encoding="UTF-8
 # Geocoding API rate limit of 600 req/min https://docs.mapbox.com/api/overview/
 
 
-def get_fake_address():
+def get_fake_address() -> dict:
     """Create an entirely made-up address"""
     return {
         "address1": fake.building_number() + " " + fake.street_name(),
@@ -26,7 +26,7 @@ def get_fake_address():
 
 @sleep_and_retry
 @limits(calls=600, period=60)
-def get_random_business_address(zip_code, category="poi"):
+def get_random_business_address(zip_code, category="poi") -> dict:
     """Find the address of a random business within a provided zip code"""
     response = geocoder.forward(zip_code, types=[category], country=["us"])
     if response.status_code != 200:
@@ -54,7 +54,7 @@ def get_random_business_address(zip_code, category="poi"):
 
 @sleep_and_retry
 @limits(calls=600, period=60)
-def get_random_realistic_address(zip_code):
+def get_random_realistic_address(zip_code) -> dict:
     """Find a random address within a provided zip code"""
     response_forward = geocoder.forward(zip_code, country=["us"])
 
