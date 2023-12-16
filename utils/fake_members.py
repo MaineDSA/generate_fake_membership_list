@@ -32,17 +32,12 @@ def generate_member():
     person["mobile_phone"] = np.random.choice([fake.basic_phone_number(), ""], 1, p=[0.7, 0.3])[0]
     person["home_phone"] = np.random.choice([fake.basic_phone_number(), ""], 1, p=[0.5, 0.5])[0]
     person["work_phone"] = ""
-    person["best_phone"] = next(
-        (
-            s
-            for s in [
+    person["best_phone"] = max(
+        [
                 person["mobile_phone"],
                 person["home_phone"],
                 person["work_phone"],
-            ]
-            if s
-        ),
-        "",
+        ], key=bool, default=""
     )
 
     person["join_date"] = fake.past_date(start_date="-15y").isoformat()
