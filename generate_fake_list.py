@@ -22,6 +22,7 @@ MAPBOX_TOKEN_FILE = ".mapbox_token"
 
 
 def parse_arguments():
+    """Get the arguments from the command line"""
     parser = argparse.ArgumentParser(description="Fake Membership List Generator")
     parser.add_argument(
         "--dsa-chapter",
@@ -55,6 +56,7 @@ def parse_arguments():
 
 
 def read_chapter_zip_codes(dsa_chapter):
+    """Get the appropriate list of zip codes for the specified DSA Chapter"""
     if dsa_chapter and Path(CHAPTER_ZIPS_FILE).is_file():
         df = pd.read_csv(CHAPTER_ZIPS_FILE)
         chapter_zip_codes = list(df.loc[df["chapter"] == dsa_chapter]["zip"])
@@ -64,6 +66,7 @@ def read_chapter_zip_codes(dsa_chapter):
 
 
 def generate_fake_list(args):
+    """Create a fake membership list based on the specified arguments"""
     chapter_zip_codes = read_chapter_zip_codes(args.dsa_chapter)
 
     people = []
@@ -103,6 +106,7 @@ def generate_fake_list(args):
 
 
 def main():
+    """Create test dataset for DSA membership list"""
     args = parse_arguments()
     generate_fake_list(args)
 
