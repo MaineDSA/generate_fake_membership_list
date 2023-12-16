@@ -72,24 +72,26 @@ def get_random_realistic_address(zip_code):
 
                 if address_features:
                     random_location = random.choice(address_features)
-                    address = {
-                        "address1": f"{random_location['address']} {random_location['text']}",
-                        "address2": "",
-                        "city": next(
-                            (item["text"] for item in random_location["context"] if item["id"].startswith("place.")),
-                            "",
-                        ),
-                        "state": next(
-                            (item["text"] for item in random_location["context"] if item["id"].startswith("region.")),
-                            "",
-                        ),
-                        "zip": next(
-                            (item["text"] for item in random_location["context"] if item["id"].startswith("postcode.")),
-                            "",
-                        ),
-                        "lat": latitude,
-                        "lon": longitude,
-                    }
-                    return address
+
+                    if "address" in random_location:
+                        address = {
+                            "address1": f"{random_location['address']} {random_location['text']}",
+                            "address2": "",
+                            "city": next(
+                                (item["text"] for item in random_location["context"] if item["id"].startswith("place.")),
+                                "",
+                            ),
+                            "state": next(
+                                (item["text"] for item in random_location["context"] if item["id"].startswith("region.")),
+                                "",
+                            ),
+                            "zip": next(
+                                (item["text"] for item in random_location["context"] if item["id"].startswith("postcode.")),
+                                "",
+                            ),
+                            "lat": latitude,
+                            "lon": longitude,
+                        }
+                        return address
 
     return None
