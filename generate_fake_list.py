@@ -1,12 +1,13 @@
 """Create test dataset for DSA membership list"""
 
 import argparse
-import random
 import datetime
+import logging
+import random
 from pathlib import Path
 from zipfile import ZipFile
-import pandas as pd
 from tqdm import tqdm
+import pandas as pd
 
 from utils.fake_members import generate_member
 from utils.fake_addresses import (
@@ -14,6 +15,9 @@ from utils.fake_addresses import (
     get_random_business_address,
     get_fake_address,
 )
+
+
+logging.basicConfig(level=logging.WARNING, format="%(asctime)s : %(levelname)s : %(message)s")
 
 
 # Constants
@@ -57,12 +61,14 @@ def parse_arguments():
 
 def read_chapter_zip_codes(dsa_chapter):
     """Get the appropriate list of zip codes for the specified DSA Chapter"""
-    if dsa_chapter and Path(CHAPTER_ZIPS_FILE).is_file():
-        df = pd.read_csv(CHAPTER_ZIPS_FILE)
-        chapter_zip_codes = list(df.loc[df["chapter"] == dsa_chapter]["zip"])
-        chapter_zip_codes = [str(zip_code).zfill(5) for zip_code in chapter_zip_codes]
-        return chapter_zip_codes
-    return []
+    if not dsa_chapter or not Path(CHAPTER_ZIPS_FILE).is_file():
+        return []
+
+    logging.info("Loading chapter zip codes from %s", CHAPTER_ZIPS_FILE)
+    df = pd.read_csv(CHAPTER_ZIPS_FILE)
+    chapter_zip_codes = list(df.loc[df["chapter"] == dsa_chapter]["zip"])
+    chapter_zip_codes = [str(zip_code).zfill(5) for zip_code in chapter_zip_codes]
+    return chapter_zip_codes
 
 
 def generate_fake_list(args):
@@ -81,12 +87,12 @@ def generate_fake_list(args):
             if realistic_address:
                 person.update(realistic_address)
             else:
-                print("No realistic address found for zip code: ", zip_code, "...")
+                logging.warning("No realistic address found for zip code: %s...", zip_code)
                 business_address = get_random_business_address(zip_code)
                 if business_address:
                     person.update(business_address)
                 else:
-                    print("No business addresses found for zip code: ", zip_code, "...")
+                    logging.warning("No business addresses found for zip code: %s...", zip_code)
                     person.update(get_fake_address())
 
         person["dsa_chapter"] = args.dsa_chapter
@@ -96,12 +102,16 @@ def generate_fake_list(args):
     df = pd.DataFrame(data=people)
     todays_date = datetime.datetime.now().date().strftime("%Y%m%d")
     filename_and_date = f"{args.output}_{todays_date}"
+
+    logging.info("Writing csv file")
     df.to_csv(f"./{filename_and_date}.csv", sep=",", index=False)
 
     output_zip_file = f"./{filename_and_date}.zip"
     if Path(output_zip_file).is_file():
+        logging.info("Deleting file: %s", output_zip_file)
         Path(output_zip_file).unlink()
     with ZipFile(output_zip_file, "x") as list_zip:
+        logging.info("Writing zip file")
         list_zip.write(f"./{filename_and_date}.csv", arcname=f"{args.output}.csv")
 
 
