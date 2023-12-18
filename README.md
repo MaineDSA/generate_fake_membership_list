@@ -20,12 +20,6 @@ source .venv/bin/activate
 3. Install the required Python modules
 ```shell
 python -m pip install -r requirements.txt
-```
-
-To run this code, you'll need to have Python 3.9, 3.10, 3.11, or 3.12 installed on your machine. You'll also need to install the required packages by running the following command from inside the project folder:
-```shell
-python -m pip install -r requirements.txt
-```
 
 ## Features
 * Creates a fake membership list containing sharable data for use in testing DSA tech tools.
@@ -40,14 +34,14 @@ python -m generate_fake_list [--args]
 
 ## Options
 ```
-  -h, --help                show this help message and exit
+  -h, --help                Show this help message and exit.
   --dsa-chapter DSA_CHAPTER
                             DSA Chapter Name Generate real addresses for the specified chapter.
                             See dsa_chapter_zip_codes/chapter_zips.csv.
   --ydsa-chapter YDSA_CHAPTER
-                            yDSA Chapter Name
+                            yDSA Chapter Name.
   --zips ZIPS [ZIPS ...]
-                            Generate real addresses based on zip codes (comma-separated)
+                            Generate real addresses based on zip codes (Ex. --zip 04101 04102 04103).
   -size SIZE                List Size The number of fake members to be generated.
   --output OUTPUT           Output File Names The name to use for the generated files.
 ```

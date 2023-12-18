@@ -27,7 +27,9 @@ MAPBOX_TOKEN_FILE = ".mapbox_token"
 
 def parse_arguments():
     """Get the arguments from the command line"""
-    parser = argparse.ArgumentParser(description="Fake Membership List Generator")
+    parser = argparse.ArgumentParser(description="Fake DSA Membership List Generator")
+    
+    # IF YOU CHANGE THESE, BE SURE TO UPDATE README.MD!!
     parser.add_argument(
         "--dsa-chapter",
         help="DSA Chapter Name\nGenerate real addresses for the specified chapter.\nSee dsa_chapter_zip_codes/chapter_zips.csv",
@@ -39,7 +41,7 @@ def parse_arguments():
     )
     parser.add_argument(
         "--zips",
-        help="Generate real addresses based on zip codes (comma-separated)",
+        help="Generate real addresses based on zip codes (Ex. --zip 04101 04102 04103).",
         action="extend",
         nargs="+",
         type=str,
@@ -56,6 +58,7 @@ def parse_arguments():
         type=str,
         default="fake_membership_list",
     )
+
     return parser.parse_args()
 
 
