@@ -28,7 +28,7 @@ MAPBOX_TOKEN_FILE = ".mapbox_token"
 def parse_arguments():
     """Get the arguments from the command line"""
     parser = argparse.ArgumentParser(description="Fake DSA Membership List Generator")
-    
+
     # IF YOU CHANGE THESE, BE SURE TO UPDATE README.MD!!
     parser.add_argument(
         "--dsa-chapter",
