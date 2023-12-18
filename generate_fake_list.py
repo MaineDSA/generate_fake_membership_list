@@ -30,7 +30,7 @@ def parse_arguments():
     parser = argparse.ArgumentParser(description="Fake Membership List Generator")
     parser.add_argument(
         "--dsa-chapter",
-        help="DSA Chapter Name\nGenerate real addresses for the specified chapter.\nSee ./dsa_chapter_zip_codes/chapter_zips.csv",
+        help="DSA Chapter Name\nGenerate real addresses for the specified chapter.\nSee dsa_chapter_zip_codes/chapter_zips.csv",
         type=str,
         default="Maine",
     )
