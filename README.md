@@ -3,37 +3,53 @@
 A python module to randomly generate a membership list in the style of DSA National for use in testing DSA tech tools.
 
 ## Getting Started
+To run this code, you'll need to have Python 3.9, 3.10, 3.11, or 3.12 installed on your machine. [Windows installation instructions](https://learn.microsoft.com/en-us/windows/python/beginners).
+You'll also need to clone this repository into a folder on your computer.
+Once you have done this, you need to install the required packages by running the following commands from inside the project folder:
 
-With Python installed and the repo cloned, from the project root:
+1. Create a virtual environment named `.venv`:
+```shell
+python -m venv .venv
+```
 
-1. create a virtual environment named `.venv`:
+2. Activate the new virtual envronment `.venv`:
+```shell
+source .venv/bin/activate
+```
 
-    **Mac/Linux/WSL**
+3. Install the required Python modules
+```shell
+python -m pip install -r requirements.txt
+```
 
-    ```
-    python -m venv .venv
-    ```
+To run this code, you'll need to have Python 3.9, 3.10, 3.11, or 3.12 installed on your machine. You'll also need to install the required packages by running the following command from inside the project folder:
+```shell
+python -m pip install -r requirements.txt
+```
 
-    **Windows + Powershell**
+## Features
+* Creates a fake membership list containing sharable data for use in testing DSA tech tools.
+* Can create lists with "real" / mappable addresses within the geographic boundary of the specified chapter.
 
-    ```
-    py -m venv .venv
-    ```
+## Usage
+1. Open the repository folder you downloaded earlier in a terminal and run the command:
+```shell
+python -m generate_fake_list [--args]
+```
+2. The output files will be located in the repository directory and has the default name `fake_membership_list.csv` and `fake_membership_list.zip`.
 
-2. activate the virtual envronment
+## Options
+```
+  -h, --help                show this help message and exit
+  --dsa-chapter DSA_CHAPTER
+                            DSA Chapter Name Generate real addresses for the specified chapter.
+                            See dsa_chapter_zip_codes/chapter_zips.csv.
+  --ydsa-chapter YDSA_CHAPTER
+                            yDSA Chapter Name
+  --zips ZIPS [ZIPS ...]
+                            Generate real addresses based on zip codes (comma-separated)
+  -size SIZE                List Size The number of fake members to be generated.
+  --output OUTPUT           Output File Names The name to use for the generated files.
+```
 
-    **Mac/Linux/WSL**
-    ```
-    source .venv/bin/activate
-    ```
-
-    **Windows + Powershell**
-    ```
-    .venv\Scripts\Activate.ps1
-    ```
-
-3. install your dependencies
-
-    ```
-    pip install -r requirements.txt
-    ```
+Feel free to explore the code and modify it according to your needs!
