@@ -16,9 +16,7 @@ from utils.fake_addresses import (
 )
 from utils.fake_members import generate_member
 
-logging.basicConfig(
-    level=logging.WARNING, format="%(asctime)s : %(levelname)s : %(message)s"
-)
+logging.basicConfig(level=logging.WARNING, format="%(asctime)s : %(levelname)s : %(message)s")
 
 
 # Constants
@@ -37,9 +35,7 @@ def parse_arguments():
         type=str,
         default="Maine",
     )
-    parser.add_argument(
-        "--ydsa-chapter", help="yDSA Chapter Name\n", type=str, default=""
-    )
+    parser.add_argument("--ydsa-chapter", help="yDSA Chapter Name\n", type=str, default="")
     parser.add_argument(
         "--zips",
         help="Generate real addresses based on zip codes (Ex. --zip 04101 04102 04103).",
@@ -91,16 +87,12 @@ def generate_fake_list(args):
             if realistic_address:
                 person.update(realistic_address)
             else:
-                logging.warning(
-                    "No realistic address found for zip code: %s...", zip_code
-                )
+                logging.warning("No realistic address found for zip code: %s...", zip_code)
                 business_address = get_random_business_address(zip_code)
                 if business_address:
                     person.update(business_address)
                 else:
-                    logging.warning(
-                        "No business addresses found for zip code: %s...", zip_code
-                    )
+                    logging.warning("No business addresses found for zip code: %s...", zip_code)
                     person.update(get_fake_address())
 
         person["dsa_chapter"] = args.dsa_chapter
