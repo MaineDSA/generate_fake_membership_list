@@ -1,4 +1,4 @@
-name: Pylint
+name: Check Python Code
 
 on:
   push:
@@ -6,15 +6,19 @@ on:
       - "main"
     paths:
       - '**.py' # Run if pushed commits include a change to a Python (.py) file.
-      - '.github/workflows/*.yml' # Run if pushed commits include a change to a github actions workflow file.
+      - '.github/workflows/lint-python.yml' # Run if pushed commits include a change to a github actions workflow file.
       - 'requirements.txt' # Run if pushed commits include a change to the Python requirements.txt file.
+      - 'pyproject.toml' # Run if ruff config changes.
+
   pull_request:
     branches:
       - "main"
     paths:
       - '**.py' # Run if pushed commits include a change to a Python (.py) file.
-      - '.github/workflows/*.yml' # Run if pushed commits include a change to a github actions workflow file.
+      - '.github/workflows/lint-python.yml' # Run if pushed commits include a change to a github actions workflow file.
       - 'requirements.txt' # Run if pushed commits include a change to the Python requirements.txt file.
+      - 'pyproject.toml' # Run if ruff config changes.
+
   workflow_dispatch:
 
 jobs:
@@ -25,15 +29,18 @@ jobs:
         python-version: ["3.12", "3.11", "3.10", "3.9"]
     steps:
     - uses: actions/checkout@v4
+
     - name: Set up Python ${{ matrix.python-version }}
       uses: actions/setup-python@v5
       with:
         python-version: ${{ matrix.python-version }}
+
     - name: Install dependencies
       run: |
         python3 -m pip install --upgrade pip
-        pip3 install pylint
+        pip3 install ruff
         if [ -f requirements.txt ]; then pip3 install -r requirements.txt; fi
-    - name: Analysing the code with pylint
+
+    - name: Linting the code with ruff
       run: |
-        pylint $(git ls-files '*.py') --max-line-length=160
+        ruff check $(git ls-files '*.py')
