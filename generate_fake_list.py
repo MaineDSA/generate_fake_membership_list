@@ -6,18 +6,19 @@ import logging
 import random
 from pathlib import Path
 from zipfile import ZipFile
-from tqdm import tqdm
+
 import pandas as pd
-
-from utils.fake_members import generate_member
+from tqdm import tqdm
 from utils.fake_addresses import (
-    get_random_realistic_address,
-    get_random_business_address,
     get_fake_address,
+    get_random_business_address,
+    get_random_realistic_address,
 )
+from utils.fake_members import generate_member
 
-
-logging.basicConfig(level=logging.WARNING, format="%(asctime)s : %(levelname)s : %(message)s")
+logging.basicConfig(
+    level=logging.WARNING, format="%(asctime)s : %(levelname)s : %(message)s"
+)
 
 
 # Constants
@@ -90,12 +91,16 @@ def generate_fake_list(args):
             if realistic_address:
                 person.update(realistic_address)
             else:
-                logging.warning("No realistic address found for zip code: %s...", zip_code)
+                logging.warning(
+                    "No realistic address found for zip code: %s...", zip_code
+                )
                 business_address = get_random_business_address(zip_code)
                 if business_address:
                     person.update(business_address)
                 else:
-                    logging.warning("No business addresses found for zip code: %s...", zip_code)
+                    logging.warning(
+                        "No business addresses found for zip code: %s...", zip_code
+                    )
                     person.update(get_fake_address())
 
         person["dsa_chapter"] = args.dsa_chapter
