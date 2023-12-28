@@ -12,14 +12,14 @@ geocoder = Geocoder(access_token=Path(".mapbox_token").read_text(encoding="UTF-8
 # Geocoding API rate limit of 600 req/min https://docs.mapbox.com/api/overview/
 
 
-def get_fake_address() -> dict:
+def get_fake_address(zip_code) -> dict:
     """Create an entirely made-up address"""
     return {
         "address1": fake.building_number() + " " + fake.street_name(),
         "address2": fake.secondary_address(),
         "city": fake.city(),
         "state": fake.state_abbr(),
-        "zip": fake.zipcode(),
+        "zip": zip_code or fake.zipcode(),
         "country": "US",
     }
 

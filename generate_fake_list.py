@@ -11,7 +11,6 @@ import pandas as pd
 from tqdm import tqdm
 from utils.fake_addresses import (
     get_fake_address,
-    get_random_business_address,
     get_random_realistic_address,
 )
 from utils.fake_members import generate_member
@@ -75,29 +74,24 @@ def generate_fake_list(args):
     """Create a fake membership list based on the specified arguments"""
     chapter_zip_codes = read_chapter_zip_codes(args.dsa_chapter)
 
-    people = []
-    for _ in tqdm(range(args.size), unit="comrades"):
-        person = generate_member()
-
+    missing_zips = []
+    people = [generate_member() for _ in range(args.size)]
+    for person in tqdm(people, unit="comrades"):
         if not Path(MAPBOX_TOKEN_FILE).is_file():
             person.update(get_fake_address())
         elif args.zips or chapter_zip_codes:
             zip_code = random.choice(args.zips or chapter_zip_codes)
-            realistic_address = get_random_realistic_address(zip_code)
-            if realistic_address:
-                person.update(realistic_address)
-            else:
-                logging.warning("No realistic address found for zip code: %s...", zip_code)
-                business_address = get_random_business_address(zip_code)
-                if business_address:
-                    person.update(business_address)
-                else:
-                    logging.warning("No business addresses found for zip code: %s...", zip_code)
-                    person.update(get_fake_address())
+            address = get_random_realistic_address(zip_code)
+            if not address:
+                missing_zips.append(zip_code)
+                address = get_fake_address(zip_code)
+            person.update(address)
 
         person["dsa_chapter"] = args.dsa_chapter
         person["ydsa_chapter"] = args.ydsa_chapter
-        people.append(person)
+
+    if missing_zips:
+        logging.warning("No realistic address found for %s zip codes:\n%s...", len(missing_zips), missing_zips)
 
     df = pd.DataFrame(data=people)
     todays_date = datetime.datetime.now().date().strftime("%Y%m%d")
