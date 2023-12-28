@@ -62,7 +62,7 @@ def get_random_realistic_address(zip_code) -> dict:
         return None
 
     data_forward = response_forward.json()
-    if "features" not in data_forward:
+    if "features" not in data_forward or len(data_forward["features"]) == 0:
         return None
 
     random_location = random.choice(data_forward["features"])
