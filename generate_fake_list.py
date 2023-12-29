@@ -62,13 +62,13 @@ def parse_arguments():
 def read_chapter_zip_codes(dsa_chapter):
     """Get the appropriate list of zip codes for the specified DSA Chapter"""
     if not dsa_chapter or not Path(CHAPTER_ZIPS_FILE).is_file():
+        logging.warning("No chapter zip codes loaded, cannot auto-select zip codes based on chapter.")
         return []
 
     logging.info("Loading chapter zip codes from %s", CHAPTER_ZIPS_FILE)
     df = pd.read_csv(CHAPTER_ZIPS_FILE)
     chapter_zip_codes = list(df.loc[df["chapter"] == dsa_chapter]["zip"])
-    chapter_zip_codes = [str(zip_code).zfill(5) for zip_code in chapter_zip_codes]
-    return chapter_zip_codes
+    return [str(zip_code).zfill(5) for zip_code in chapter_zip_codes]
 
 
 def generate_fake_list(args):
