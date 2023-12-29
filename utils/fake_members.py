@@ -4,75 +4,92 @@ found in nationally-provided membership lists, with the exception of an address
 """
 
 import datetime
-import numpy as np
+from attrs import define, Factory
 from dateutil.relativedelta import relativedelta
 from faker import Faker
 from faker_education import SchoolProvider
+import numpy as np
 
 fake = Faker()
 fake.add_provider(SchoolProvider)
 
 
-def generate_member() -> dict:
-    """
-    Creates a dict of information for a single fake DSA member keyed to the column names
-    found in nationally-provided membership lists, with the exception of an address
-    """
-    member = {}
+def generate_middle_name() -> str:
+    return np.random.choice([fake.first_name() + ".", fake.first_name(), ""], p=[0.08, 0.06, 0.86])
 
-    member["first_name"] = fake.first_name()
-    member["middle_name"] = np.random.choice([fake.first_name()[0] + ".", fake.first_name(), ""], 1, p=[0.08, 0.06, 0.86])[0]
-    member["last_name"] = fake.last_name()
 
-    member["email"] = fake.email()
+def generate_do_not_call() -> str:
+    return np.random.choice(["True", ""], p=[0.08, 0.92])
 
-    member["do_not_call"] = np.random.choice(["True", ""], 1, p=[0.08, 0.92])[0]
-    member["p2ptext_optout"] = np.random.choice(["TRUE", ""], 1, p=[0.16, 0.84])[0]
 
-    member["mobile_phone"] = np.random.choice([fake.basic_phone_number(), ""], 1, p=[0.7, 0.3])[0]
-    member["home_phone"] = np.random.choice([fake.basic_phone_number(), ""], 1, p=[0.5, 0.5])[0]
-    member["work_phone"] = ""
-    member["best_phone"] = max(
+def generate_p2ptext_optout() -> str:
+    return np.random.choice(["TRUE", ""], p=[0.16, 0.84])
+
+
+def generate_mobile_phone() -> str:
+    return np.random.choice([fake.basic_phone_number(), ""], p=[0.7, 0.3])
+
+
+def generate_home_phone() -> str:
+    return np.random.choice([fake.basic_phone_number(), ""], p=[0.5, 0.5])
+
+
+def generate_work_phone() -> str:
+    return ""
+
+
+def generate_best_phone(self) -> str:
+    return max(
         [
-            member["mobile_phone"],
-            member["home_phone"],
-            member["work_phone"],
+            self.mobile_phone,
+            self.home_phone,
+            self.work_phone,
         ],
         key=bool,
         default="",
     )
 
-    member["join_date"] = fake.date_between_dates(  # date must be between 1982-06-01 and today.
+
+def generate_join_date() -> str:
+    return fake.date_between_dates(  # date must be between 1982-06-01 and today.
         date_start=(datetime.datetime.strptime("1982-06-01", "%Y-%m-%d").date()),
         date_end=(datetime.datetime.now().date()),
     ).isoformat()
+
+
+def generate_xdate(self) -> str:
     expiration_date = fake.date_between_dates(
         date_start=(
-            datetime.datetime.strptime(member["join_date"], "%Y-%m-%d").date() + relativedelta(years=1)
+            datetime.datetime.strptime(self.join_date, "%Y-%m-%d").date() + relativedelta(years=1)
         ),  # date must be at least 1 yr after join date but no more than one year in the future.
         date_end=(datetime.datetime.now().date() + relativedelta(years=1)),
     ).isoformat()
-    member["xdate"] = np.random.choice(
-        [expiration_date, "2099-11-01"],
-        1,
-        p=[0.99, 0.01],  # Lifetime members have join date of 2099-11-01
-    )[0]
+    # Lifetime members have join date of 2099-11-01
+    return np.random.choice([expiration_date, "2099-11-01"], p=[0.99, 0.01])
 
-    member["membership_status"] = "Lapsed"
-    member["memb_status_letter"] = "L"
-    if datetime.datetime.strptime(member["xdate"], "%Y-%m-%d").date() >= datetime.datetime.now().date():
-        member["membership_status"] = "Member in Good Standing"
-        member["memb_status_letter"] = "M"
-    elif datetime.datetime.strptime(member["xdate"], "%Y-%m-%d").date() > (datetime.datetime.now().date() - relativedelta(years=1)):
-        member["membership_status"] = "Member"
-        member["memb_status_letter"] = "M"
 
-    member["membership_type"] = np.random.choice(
+def generate_membership_status(self) -> str:
+    if datetime.datetime.strptime(self.xdate, "%Y-%m-%d").date() >= datetime.datetime.now().date():
+        return "Member in Good Standing"
+    elif datetime.datetime.strptime(self.xdate, "%Y-%m-%d").date() > (datetime.datetime.now().date() - relativedelta(years=1)):
+        return "Member"
+    return "Lapsed"
+
+
+def generate_memb_status_letter(self) -> str:
+    if self.membership_status.find("Member") == 0:
+        return "M"
+    return "L"
+
+
+def generate_membership_type() -> str:
+    return np.random.choice(
         ["", "one-time", "yearly", "annual", "monthly", "income-based"],
-        1,
         p=[0.01, *([0.2] * 4), 0.19],
-    )[0]
+    )
 
+
+def generate_monthly_dues_status(self) -> str:
     monthly_dues_types = [
         "lapsed",
         "past_due",
@@ -80,14 +97,12 @@ def generate_member() -> dict:
         "canceled_by_admin",
         "canceled_by_failure",
     ]
-    if member["membership_status"] == "Member in Good Standing":
+    if self.membership_status == "Member in Good Standing":
         monthly_dues_types.append("active")
+    return np.random.choice(monthly_dues_types)
 
-    member["monthly_dues_status"] = np.random.choice(
-        monthly_dues_types,
-        1,
-    )[0]
 
+def generate_yearly_dues_status(self) -> str:
     yearly_dues_types = [
         "",
         "never",
@@ -96,15 +111,13 @@ def generate_member() -> dict:
         "canceled_by_admin",
         "canceled_by_failure",
     ]
-    if (member["membership_status"] == "Member in Good Standing") and (member["monthly_dues_status"] != "active"):
+    if (self.membership_status == "Member in Good Standing") and (self.monthly_dues_status != "active"):
         yearly_dues_types.append("active")
+    return np.random.choice(yearly_dues_types)
 
-    member["yearly_dues_status"] = np.random.choice(
-        yearly_dues_types,
-        1,
-    )[0]
 
-    member["union_member"] = np.random.choice(
+def generate_union_member() -> str:
+    return np.random.choice(
         [
             "",
             "Yes, current union member",
@@ -113,34 +126,43 @@ def generate_member() -> dict:
             "No, not a union member",
             "Currently organizing my workplace",
         ],
-        1,
         p=[0.05, *([0.19] * 5)],
-    )[0]
-    member["union_name"] = ""
-    member["union_local"] = ""
-    if member["union_member"].find("Yes") == 0:
-        member["union_name"] = np.random.choice(
-            [
-                "",
-                "NEA",
-                "SEIU",
-                "AFSCME",
-                "Teamsters",
-                "UFCW",
-                "UAW",
-                "USW",
-                "AFT",
-                "IBEW",
-                "LIUNA",
-            ],
-            1,
-            p=[0.1, *([0.09] * 10)],
-        )[0]
-        member["union_local"] = fake.random_int(min=5, max=5999)
+    )
 
-    member["accomodations"] = ""
 
-    member["race"] = np.random.choice(
+def generate_union_name(self) -> str:
+    if self.union_member.find("Yes") != 0:
+        return ""
+    return np.random.choice(
+        [
+            "",
+            "NEA",
+            "SEIU",
+            "AFSCME",
+            "Teamsters",
+            "UFCW",
+            "UAW",
+            "USW",
+            "AFT",
+            "IBEW",
+            "LIUNA",
+        ],
+        p=[0.1, *([0.09] * 10)],
+    )
+
+
+def generate_union_local(self) -> str:
+    if self.union_member.find("Yes") != 0:
+        return ""
+    return fake.random_int(min=5, max=5999)
+
+
+def generate_accomodations() -> str:
+    return ""
+
+
+def generate_race() -> str:
+    return np.random.choice(
         [
             "Asian",
             "Black / of African Descent",
@@ -153,10 +175,11 @@ def generate_member() -> dict:
             "West Asian / Middle Eastern",
             "White / of European Descent",
         ],
-        1,
-    )[0]
+    )
 
-    member["student_yes_no"] = np.random.choice(
+
+def generate_student_yes_no() -> str:
+    return np.random.choice(
         [
             "",
             "No",
@@ -164,32 +187,72 @@ def generate_member() -> dict:
             "Yes, high school student",
             "Yes, graduate student",
         ],
-        1,
-    )[0]
-    member["student_school_name"] = ""
-    if member["student_yes_no"].find("Yes") == 0:
-        member["student_school_name"] = fake.school_name()
+    )
 
-    member["mailing_pref"] = np.random.choice(
+
+def generate_student_school_name(self) -> str:
+    if self.student_yes_no.find("Yes") != 0:
+        return ""
+    return fake.school_name()
+
+
+def generate_mailing_pref() -> str:
+    return np.random.choice(
         [
             "Yes",
             "No",
             "Membership card only",
         ],
-        1,
-    )[0]
+    )
 
-    member["actionkit_id"] = fake.unique.random_int(min=1000, max=999999)
 
-    member["dsa_chapter"] = ""
-    member["ydsa_chapter"] = ""
+def generate_actionkit_id() -> int:
+    return fake.unique.random_int(min=1000, max=999999)
 
-    member["congressional_district"] = np.random.choice(
+
+def generate_chapter() -> str:
+    return ""
+
+
+def generate_congressional_district() -> str:
+    return np.random.choice(
         [
             "ME_01",
             "ME_02",
         ],
-        1,
-    )[0]
+    )
 
-    return member
+
+@define
+class Member:
+    """Represents the data of a single fake member"""
+
+    first_name: str = Factory(fake.first_name)
+    middle_name: str = Factory(generate_middle_name)
+    last_name: str = Factory(fake.last_name)
+    email: str = Factory(fake.email)
+    do_not_call: str = Factory(generate_do_not_call)
+    p2ptext_optout: str = Factory(generate_p2ptext_optout)
+    mobile_phone: str = Factory(generate_mobile_phone)
+    home_phone: str = Factory(generate_home_phone)
+    work_phone: str = Factory(generate_work_phone)
+    best_phone: str = Factory(generate_best_phone, takes_self=True)
+    join_date: str = Factory(generate_join_date)
+    xdate: str = Factory(generate_xdate, takes_self=True)
+    membership_status: str = Factory(generate_membership_status, takes_self=True)
+    memb_status_letter: str = Factory(generate_memb_status_letter, takes_self=True)
+    membership_type: str = Factory(generate_membership_type)
+    monthly_dues_status: str = Factory(generate_monthly_dues_status, takes_self=True)
+    yearly_dues_status: str = Factory(generate_yearly_dues_status, takes_self=True)
+    union_member: str = Factory(generate_union_member)
+    union_name: str = Factory(generate_union_name, takes_self=True)
+    union_local: str = Factory(generate_union_local, takes_self=True)
+    accomodations: str = Factory(generate_accomodations)
+    race: str = Factory(generate_race)
+    student_yes_no: str = Factory(generate_student_yes_no)
+    student_school_name: str = Factory(generate_student_school_name, takes_self=True)
+    mailing_pref: str = Factory(generate_mailing_pref)
+    actionkit_id: int = Factory(generate_actionkit_id)
+    dsa_chapter: int = Factory(generate_chapter)
+    ydsa_chapter: int = Factory(generate_chapter)
+    congressional_district: int = Factory(generate_congressional_district)

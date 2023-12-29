@@ -14,7 +14,7 @@ from utils.fake_addresses import (
     get_fake_address,
     get_random_realistic_address,
 )
-from utils.fake_members import generate_member
+from utils.fake_members import Member
 
 logging.basicConfig(level=logging.WARNING, format="%(asctime)s : %(levelname)s : %(message)s")
 
@@ -76,7 +76,7 @@ def generate_fake_list(args):
     chapter_zip_codes = read_chapter_zip_codes(args.dsa_chapter)
 
     missing_zips = []
-    people = [generate_member() for _ in range(args.size)]
+    people = [asdict(Member()) for _ in range(args.size)]
     for person in tqdm(people, unit="comrades"):
         if not Path(MAPBOX_TOKEN_FILE).is_file():
             person.update(get_fake_address())

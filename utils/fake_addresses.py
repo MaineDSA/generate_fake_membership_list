@@ -91,9 +91,7 @@ def get_random_realistic_address(zip_code: str) -> Address:
     if response_reverse.status_code != 200:
         return None
 
-    data_reverse = response_reverse.json()
-
-    address_features = [feature for feature in data_reverse["features"] if "address" in feature["place_type"]]
+    address_features = [feature for feature in response_reverse.json()["features"] if "address" in feature["place_type"]]
     if not address_features:
         return None
 
