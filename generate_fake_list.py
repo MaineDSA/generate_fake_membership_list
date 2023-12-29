@@ -7,6 +7,7 @@ import random
 from pathlib import Path
 from zipfile import ZipFile
 
+from attrs import asdict
 import pandas as pd
 from tqdm import tqdm
 from utils.fake_addresses import (
@@ -85,7 +86,7 @@ def generate_fake_list(args):
             if not address:
                 missing_zips.append(zip_code)
                 address = get_fake_address(zip_code)
-            person.update(address)
+            person.update(asdict(address))
 
         person["dsa_chapter"] = args.dsa_chapter
         person["ydsa_chapter"] = args.ydsa_chapter
