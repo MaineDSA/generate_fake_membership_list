@@ -16,10 +16,7 @@ from utils.fake_addresses import (
 )
 from utils.fake_members import Member
 
-logging.basicConfig(level=logging.WARNING, format="%(asctime)s : %(levelname)s : %(message)s")
 
-
-# Constants
 CHAPTER_ZIPS_FILE = "./dsa_chapter_zip_codes/chapter_zips.csv"
 MAPBOX_TOKEN_FILE = ".mapbox_token"
 
@@ -112,6 +109,7 @@ def generate_fake_list(args):
 
 def main():
     """Create test dataset for DSA membership list"""
+    logging.basicConfig(level=logging.WARNING, format="%(asctime)s : %(levelname)s : %(message)s")
     args = parse_arguments()
     generate_fake_list(args)
 
