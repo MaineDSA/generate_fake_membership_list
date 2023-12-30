@@ -43,35 +43,6 @@ def get_fake_address(zip_code: str) -> Address:
 
 @sleep_and_retry
 @limits(calls=600, period=60)
-def get_random_business_address(zip_code: str, category="poi") -> Address:
-    """Find the address of a random business within a provided zip code"""
-    response = geocoder.forward(zip_code, types=[category], country=["us"])
-    if response.status_code != 200:
-        return None
-
-    data = response.json()
-    if ("features" not in data) or (len(data["features"]) == 0):
-        return None
-
-    place = data["features"][0]  # Retrieve the first business found
-    properties = place["properties"]
-    context = place.get("context", [])
-    address = [item["text"] for item in context if item["id"].startswith("address")]
-
-    return Address(
-        address1=address[0] if len(address) > 0 else "",
-        address2=address[1] if len(address) > 1 else "",
-        city=properties.get("address", {}).get("city"),
-        state=properties.get("address", {}).get("state"),
-        zip=properties.get("address", {}).get("postcode"),
-        country=properties.get("address", {}).get("country"),
-        lat=None,
-        lon=None,
-    )
-
-
-@sleep_and_retry
-@limits(calls=600, period=60)
 def get_random_realistic_address(zip_code: str) -> Address:
     """Find a random address within a provided zip code"""
     response_forward = geocoder.forward(zip_code, country=["us"])
