@@ -28,27 +28,27 @@ def parse_arguments():
     # IF YOU CHANGE THESE, BE SURE TO UPDATE README.MD!!
     parser.add_argument(
         "--dsa-chapter",
-        help="DSA Chapter Name\nGenerate real addresses for the specified chapter.\nSee dsa_chapter_zip_codes/chapter_zips.csv",
+        help="DSA Chapter Name.\nAlso used to generate real addresses within the bounds of the specified chapter.\nSee dsa_chapter_zip_codes/chapter_zips.csv",
         type=str,
         default="Maine",
     )
-    parser.add_argument("--ydsa-chapter", help="yDSA Chapter Name\n", type=str, default="")
+    parser.add_argument("--ydsa-chapter", help="yDSA Chapter Name", type=str, default="")
     parser.add_argument(
         "--zips",
-        help="Generate real addresses based on zip codes (Ex. --zip 04101 04102 04103).",
+        help="Zip Codes.\nGenerate real addresses based on specific zip codes instead of using chapter name (Ex. --zip 04101 04102 04103).",
         action="extend",
         nargs="+",
         type=str,
     )
     parser.add_argument(
         "-size",
-        help="List Size\nThe number of fake members to be generated.",
+        help="List Size.\nThe number of fake members to be generated.",
         type=int,
         default=10,
     )
     parser.add_argument(
         "--output",
-        help="Output File Names\nThe name to use for the generated files.",
+        help="Output File Names.\nThe name to use for the generated files.",
         type=str,
         default="fake_membership_list",
     )

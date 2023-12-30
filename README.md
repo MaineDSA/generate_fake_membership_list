@@ -36,14 +36,14 @@ python -m generate_fake_list [--args]
 ```
   -h, --help                Show this help message and exit.
   --dsa-chapter DSA_CHAPTER
-                            DSA Chapter Name Generate real addresses for the specified chapter.
+                            DSA Chapter Name. Also used to generate real addresses within the bounds of the specified chapter.
                             See dsa_chapter_zip_codes/chapter_zips.csv.
   --ydsa-chapter YDSA_CHAPTER
                             yDSA Chapter Name.
   --zips ZIPS [ZIPS ...]
-                            Generate real addresses based on zip codes (Ex. --zip 04101 04102 04103).
-  -size SIZE                List Size The number of fake members to be generated.
-  --output OUTPUT           Output File Names The name to use for the generated files.
+                            Zip Codes. Generate real addresses based on specific zip codes (Ex. --zip 04101 04102 04103).
+  -size SIZE                List Size. The number of fake members to be generated.
+  --output OUTPUT           Output File Names. The name to use for the generated files.
 ```
 
 Feel free to explore the code and modify it according to your needs!
