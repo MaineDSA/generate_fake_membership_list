@@ -1,6 +1,6 @@
 attrs==23.1.0
 faker_education==1.2.1
-Faker==21.0.0
+Faker==22.0.0
 mapbox==0.18.1
 numpy==1.26.2
 pandas==2.1.4
