@@ -20,6 +20,7 @@ source .venv/bin/activate
 3. Install the required Python modules
 ```shell
 python -m pip install -r requirements.txt
+```
 
 ## Features
 * Creates a fake membership list containing sharable data for use in testing DSA tech tools.
