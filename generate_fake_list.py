@@ -75,9 +75,11 @@ def generate_fake_list(args: argparse.Namespace):
     missing_zips = []
     people = [asdict(Member()) for _ in range(args.size)]
     for person in tqdm(people, unit="comrades"):
+        zip_code = random.choice(args.zips or chapter_zip_codes)
         if not MAPBOX_TOKEN_PATH.is_file():
+            address = get_fake_address(zip_code)
+            person.update(asdict(address))
         elif args.zips or chapter_zip_codes:
-            zip_code = random.choice(args.zips or chapter_zip_codes)
             address = get_random_realistic_address(zip_code)
             if not address:
                 missing_zips.append(zip_code)
