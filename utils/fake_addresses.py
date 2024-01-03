@@ -30,7 +30,7 @@ class Address:
     lon: float
 
 
-def get_fake_address(zip_code: str) -> Address:
+def get_fake_address(zip_code: str = None) -> Address:
     """Create an entirely made-up address"""
     return Address(
         address1=fake.building_number() + " " + fake.street_name(),
