@@ -17,8 +17,8 @@ from utils.fake_addresses import (
 from utils.fake_members import Member
 
 
-CHAPTER_ZIPS_FILE = "./dsa_chapter_zip_codes/chapter_zips.csv"
-MAPBOX_TOKEN_FILE = ".mapbox_token"
+CHAPTER_ZIPS_PATH = Path("./dsa_chapter_zip_codes/chapter_zips.csv")
+MAPBOX_TOKEN_PATH = Path(".mapbox_token")
 
 
 def parse_arguments() -> argparse.Namespace:
@@ -58,12 +58,12 @@ def parse_arguments() -> argparse.Namespace:
 
 def read_chapter_zip_codes(dsa_chapter: str) -> list[str]:
     """Get the appropriate list of zip codes for the specified DSA Chapter"""
-    if not dsa_chapter or not Path(CHAPTER_ZIPS_FILE).is_file():
+    if not dsa_chapter or not CHAPTER_ZIPS_PATH.is_file():
         logging.warning("No chapter zip codes loaded, cannot auto-select zip codes based on chapter.")
         return []
 
-    logging.info("Loading chapter zip codes from %s", CHAPTER_ZIPS_FILE)
-    df = pd.read_csv(CHAPTER_ZIPS_FILE)
+    logging.info("Loading chapter zip codes from %s", CHAPTER_ZIPS_PATH)
+    df = pd.read_csv(CHAPTER_ZIPS_PATH)
     chapter_zip_codes = list(df.loc[df["chapter"] == dsa_chapter]["zip"])
     return [str(zip_code).zfill(5) for zip_code in chapter_zip_codes]
 
@@ -75,8 +75,7 @@ def generate_fake_list(args: argparse.Namespace):
     missing_zips = []
     people = [asdict(Member()) for _ in range(args.size)]
     for person in tqdm(people, unit="comrades"):
-        if not Path(MAPBOX_TOKEN_FILE).is_file():
-            person.update(get_fake_address())
+        if not MAPBOX_TOKEN_PATH.is_file():
         elif args.zips or chapter_zip_codes:
             zip_code = random.choice(args.zips or chapter_zip_codes)
             address = get_random_realistic_address(zip_code)
