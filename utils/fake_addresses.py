@@ -8,7 +8,10 @@ from mapbox import Geocoder
 from ratelimit import limits, sleep_and_retry
 
 fake = Faker()
-geocoder = Geocoder(access_token=Path(".mapbox_token").read_text(encoding="UTF-8"))
+MAPBOX_TOKEN_PATH = Path(".mapbox_token")
+geocoder = Geocoder()
+if MAPBOX_TOKEN_PATH.is_file():
+    geocoder = Geocoder(access_token=MAPBOX_TOKEN_PATH.read_text(encoding="UTF-8"))
 
 # Geocoding API rate limit of 600 req/min https://docs.mapbox.com/api/overview/
 
