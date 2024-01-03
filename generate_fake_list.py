@@ -21,7 +21,7 @@ CHAPTER_ZIPS_FILE = "./dsa_chapter_zip_codes/chapter_zips.csv"
 MAPBOX_TOKEN_FILE = ".mapbox_token"
 
 
-def parse_arguments():
+def parse_arguments() -> argparse.Namespace:
     """Get the arguments from the command line"""
     parser = argparse.ArgumentParser(description="Fake DSA Membership List Generator")
 
@@ -56,7 +56,7 @@ def parse_arguments():
     return parser.parse_args()
 
 
-def read_chapter_zip_codes(dsa_chapter):
+def read_chapter_zip_codes(dsa_chapter: str) -> list[str]:
     """Get the appropriate list of zip codes for the specified DSA Chapter"""
     if not dsa_chapter or not Path(CHAPTER_ZIPS_FILE).is_file():
         logging.warning("No chapter zip codes loaded, cannot auto-select zip codes based on chapter.")
@@ -68,7 +68,7 @@ def read_chapter_zip_codes(dsa_chapter):
     return [str(zip_code).zfill(5) for zip_code in chapter_zip_codes]
 
 
-def generate_fake_list(args):
+def generate_fake_list(args: argparse.Namespace):
     """Create a fake membership list based on the specified arguments"""
     chapter_zip_codes = read_chapter_zip_codes(args.dsa_chapter)
 
