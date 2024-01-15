@@ -8,6 +8,7 @@ ignore = ["C400", "C401"]
 
 [project]
 name = "fake_membership_list"
+version = "1.0.0"
 readme = "README.md"
 requires-python = ">=3.9"
 license = { "file" = "LICENSE" }
