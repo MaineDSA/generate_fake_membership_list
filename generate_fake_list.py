@@ -7,15 +7,12 @@ import random
 from pathlib import Path
 from zipfile import ZipFile
 
-from attrs import asdict
+import attrs
 import pandas as pd
 from tqdm import tqdm
-from utils.fake_addresses import (
-    get_fake_address,
-    get_random_realistic_address,
-)
-from utils.fake_members import Member
 
+from utils import fake_addresses
+from utils import fake_members
 
 CHAPTER_ZIPS_PATH = Path("./dsa_chapter_zip_codes/chapter_zips.csv")
 MAPBOX_TOKEN_PATH = Path(".mapbox_token")
@@ -73,18 +70,18 @@ def generate_fake_list(args: argparse.Namespace):
     chapter_zip_codes = read_chapter_zip_codes(args.dsa_chapter)
 
     missing_zips = []
-    people = [asdict(Member()) for _ in range(args.size)]
+    people = [attrs.asdict(fake_members.Member()) for _ in range(args.size)]
     for person in tqdm(people, unit="comrades"):
         zip_code = random.choice(args.zips or chapter_zip_codes)
         if not MAPBOX_TOKEN_PATH.is_file():
-            address = get_fake_address(zip_code)
-            person.update(asdict(address))
+            address = fake_addresses.get_fake_address(zip_code)
+            person.update(attrs.asdict(address))
         elif args.zips or chapter_zip_codes:
-            address = get_random_realistic_address(zip_code)
+            address = fake_addresses.get_random_realistic_address(zip_code)
             if not address:
                 missing_zips.append(zip_code)
-                address = get_fake_address(zip_code)
-            person.update(asdict(address))
+                address = fake_addresses.get_fake_address(zip_code)
+            person.update(attrs.asdict(address))
 
         person["dsa_chapter"] = args.dsa_chapter
         person["ydsa_chapter"] = args.ydsa_chapter

@@ -2,30 +2,32 @@
 
 import random
 from pathlib import Path
-from attrs import define, field
+
+import attrs
+import mapbox
+import ratelimit
 from faker import Faker
-from mapbox import Geocoder
-from ratelimit import limits, sleep_and_retry
 
 fake = Faker()
 MAPBOX_TOKEN_PATH = Path(".mapbox_token")
-geocoder = Geocoder()
+geocoder = mapbox.Geocoder()
 if MAPBOX_TOKEN_PATH.is_file():
-    geocoder = Geocoder(access_token=MAPBOX_TOKEN_PATH.read_text(encoding="UTF-8"))
+    geocoder = mapbox.Geocoder(access_token=MAPBOX_TOKEN_PATH.read_text(encoding="UTF-8"))
+
 
 # Geocoding API rate limit of 600 req/min https://docs.mapbox.com/api/overview/
 
 
-@define
+@attrs.define
 class Address:
     """Represents a complete address along with an optional latitude and longitude"""
 
-    address1: str = field()
-    address2: str = field()
-    city: str = field()
-    state: str = field()
-    zip: str = field()
-    country: str = field()
+    address1: str = attrs.field()
+    address2: str = attrs.field()
+    city: str = attrs.field()
+    state: str = attrs.field()
+    zip: str = attrs.field()
+    country: str = attrs.field()
     lat: float
     lon: float
 
@@ -44,8 +46,8 @@ def get_fake_address(zip_code: str = None) -> Address:
     )
 
 
-@sleep_and_retry
-@limits(calls=600, period=60)
+@ratelimit.sleep_and_retry
+@ratelimit.limits(calls=600, period=60)
 def get_random_realistic_address(zip_code: str) -> Address:
     """Find a random address within a provided zip code"""
     response_forward = geocoder.forward(zip_code, country=["us"])
