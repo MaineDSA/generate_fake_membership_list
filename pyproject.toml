@@ -23,11 +23,11 @@ dependencies = [
     "pandas==2.1.4",
     "python-dateutil==2.8.2",
     "ratelimit==2.2.1",
-    "ruff==0.1.13",
     "tqdm==4.66.1",
 ]
 
 [project.optional-dependencies]
 github-actions = [
+    "ruff==0.1.13",
     "ydiff==1.2"
 ]
