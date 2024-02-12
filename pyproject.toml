@@ -19,7 +19,7 @@ dependencies = [
     "faker_education==1.2.1",
     "Faker==22.6.0",
     "mapbox==0.18.1",
-    "numpy==1.26.3",
+    "numpy==1.26.4",
     "pandas==2.2.0",
     "python-dateutil==2.8.2",
     "ratelimit==2.2.1",
