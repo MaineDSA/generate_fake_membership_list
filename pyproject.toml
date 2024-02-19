@@ -17,7 +17,7 @@ urls = { "GitHub" = "https://github.com/MaineDSA/fake_membership_list" }
 dependencies = [
     "attrs==23.2.0",
     "faker_education==1.2.1",
-    "Faker==23.1.0",
+    "Faker==23.2.1",
     "mapbox==0.18.1",
     "numpy==1.26.4",
     "pandas==2.2.0",
