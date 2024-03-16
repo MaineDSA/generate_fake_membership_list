@@ -1,4 +1,4 @@
-[![Check Python Code](https://github.com/MaineDSA/generate_fake_membership_list/actions/workflows/lint-python.yml/badge.svg)](https://github.com/MaineDSA/generate_fake_membership_list/actions/workflows/lint-python.yml)
+[![Check Python Code](https://github.com/MaineDSA/generate_fake_membership_list/actions/workflows/lint-python.yml/badge.svg)](https://github.com/MaineDSA/generate_fake_membership_list/actions/workflows/lint-python.yml) [![CodeQL](https://github.com/MaineDSA/generate_fake_membership_list/actions/workflows/github-code-scanning/codeql/badge.svg)](https://github.com/MaineDSA/generate_fake_membership_list/actions/workflows/github-code-scanning/codeql)
 # Fake DSA Membership List Generator
 A python module to randomly generate a membership list in the style of DSA National for use in testing DSA tech tools.
 
