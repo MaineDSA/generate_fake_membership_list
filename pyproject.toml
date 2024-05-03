@@ -23,7 +23,7 @@ dependencies = [
     "pandas==2.2.2",
     "python-dateutil==2.9.0.post0",
     "ratelimit==2.2.1",
-    "tqdm==4.66.2",
+    "tqdm==4.66.3",
 ]
 
 [project.optional-dependencies]
