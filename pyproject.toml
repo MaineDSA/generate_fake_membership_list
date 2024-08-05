@@ -15,7 +15,7 @@ license = { "file" = "LICENSE" }
 authors = [{ "name" = "bmos", "email" = "wil.t.dsa@pm.me" }]
 urls = { "GitHub" = "https://github.com/MaineDSA/fake_membership_list" }
 dependencies = [
-    "attrs==23.2.0",
+    "attrs==24.1.0",
     "faker_education==1.2.1",
     "Faker==26.1.0",
     "mapbox==0.18.1",
