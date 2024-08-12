@@ -29,9 +29,9 @@ dependencies = [
 [project.optional-dependencies]
 dev = [
     "pre-commit==3.8.0",
-    "ruff==0.5.6"
+    "ruff==0.5.7"
 ]
 github-actions = [
-    "ruff==0.5.6",
+    "ruff==0.5.7",
     "ydiff==1.3"
 ]
