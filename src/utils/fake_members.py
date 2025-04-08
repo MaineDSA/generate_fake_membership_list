@@ -1,14 +1,15 @@
 """
-Creates a dict of information for a single fake DSA member keyed to the column names
-found in nationally-provided membership lists, with the exception of an address
+Create a dict of information for a single fake DSA member.
+
+Key member info to the column names found in nationally-provided membership lists, with the exception of an address.
 """
 
 import datetime
 
-import attrs
 import dateutil
 import faker_education
 import numpy as np
+from attrs import Factory, define
 from faker import Faker
 
 fake = Faker()
@@ -72,7 +73,7 @@ def generate_xdate(self) -> str:
 def generate_membership_status(self) -> str:
     if datetime.datetime.strptime(self.xdate, "%Y-%m-%d").date() >= datetime.datetime.now().date():
         return "Member in Good Standing"
-    elif datetime.datetime.strptime(self.xdate, "%Y-%m-%d").date() > (datetime.datetime.now().date() - dateutil.relativedelta.relativedelta(years=1)):
+    if datetime.datetime.strptime(self.xdate, "%Y-%m-%d").date() > (datetime.datetime.now().date() - dateutil.relativedelta.relativedelta(years=1)):
         return "Member"
     return "Lapsed"
 
@@ -155,7 +156,7 @@ def generate_union_name(self) -> str:
 def generate_union_local(self) -> str:
     if self.union_member.find("Yes") != 0:
         return ""
-    return fake.random_int(min=5, max=5999)
+    return str(fake.random_int(min=5, max=5999))
 
 
 def generate_accomodations() -> str:
@@ -224,36 +225,36 @@ def generate_congressional_district() -> str:
     )
 
 
-@attrs.define
+@define
 class Member:
-    """Represents the data of a single fake member"""
+    """Represent the data of a single fake member."""
 
-    first_name: str = attrs.Factory(fake.first_name)
-    middle_name: str = attrs.Factory(generate_middle_name)
-    last_name: str = attrs.Factory(fake.last_name)
-    email: str = attrs.Factory(fake.email)
-    do_not_call: str = attrs.Factory(generate_do_not_call)
-    p2ptext_optout: str = attrs.Factory(generate_p2ptext_optout)
-    mobile_phone: str = attrs.Factory(generate_mobile_phone)
-    home_phone: str = attrs.Factory(generate_home_phone)
-    work_phone: str = attrs.Factory(generate_work_phone)
-    best_phone: str = attrs.Factory(generate_best_phone, takes_self=True)
-    join_date: str = attrs.Factory(generate_join_date)
-    xdate: str = attrs.Factory(generate_xdate, takes_self=True)
-    membership_status: str = attrs.Factory(generate_membership_status, takes_self=True)
-    memb_status_letter: str = attrs.Factory(generate_memb_status_letter, takes_self=True)
-    membership_type: str = attrs.Factory(generate_membership_type)
-    monthly_dues_status: str = attrs.Factory(generate_monthly_dues_status, takes_self=True)
-    yearly_dues_status: str = attrs.Factory(generate_yearly_dues_status, takes_self=True)
-    union_member: str = attrs.Factory(generate_union_member)
-    union_name: str = attrs.Factory(generate_union_name, takes_self=True)
-    union_local: str = attrs.Factory(generate_union_local, takes_self=True)
-    accomodations: str = attrs.Factory(generate_accomodations)
-    race: str = attrs.Factory(generate_race)
-    student_yes_no: str = attrs.Factory(generate_student_yes_no)
-    student_school_name: str = attrs.Factory(generate_student_school_name, takes_self=True)
-    mailing_pref: str = attrs.Factory(generate_mailing_pref)
-    actionkit_id: int = attrs.Factory(generate_actionkit_id)
-    dsa_chapter: int = attrs.Factory(generate_chapter)
-    ydsa_chapter: int = attrs.Factory(generate_chapter)
-    congressional_district: int = attrs.Factory(generate_congressional_district)
+    first_name: str = Factory(fake.first_name)
+    middle_name: str = Factory(generate_middle_name)
+    last_name: str = Factory(fake.last_name)
+    email: str = Factory(fake.email)
+    do_not_call: str = Factory(generate_do_not_call)
+    p2ptext_optout: str = Factory(generate_p2ptext_optout)
+    mobile_phone: str = Factory(generate_mobile_phone)
+    home_phone: str = Factory(generate_home_phone)
+    work_phone: str = Factory(generate_work_phone)
+    best_phone: str = Factory(generate_best_phone, takes_self=True)
+    join_date: str = Factory(generate_join_date)
+    xdate: str = Factory(generate_xdate, takes_self=True)
+    membership_status: str = Factory(generate_membership_status, takes_self=True)
+    memb_status_letter: str = Factory(generate_memb_status_letter, takes_self=True)
+    membership_type: str = Factory(generate_membership_type)
+    monthly_dues_status: str = Factory(generate_monthly_dues_status, takes_self=True)
+    yearly_dues_status: str = Factory(generate_yearly_dues_status, takes_self=True)
+    union_member: str = Factory(generate_union_member)
+    union_name: str = Factory(generate_union_name, takes_self=True)
+    union_local: str = Factory(generate_union_local, takes_self=True)
+    accomodations: str = Factory(generate_accomodations)
+    race: str = Factory(generate_race)
+    student_yes_no: str = Factory(generate_student_yes_no)
+    student_school_name: str = Factory(generate_student_school_name, takes_self=True)
+    mailing_pref: str = Factory(generate_mailing_pref)
+    actionkit_id: int = Factory(generate_actionkit_id)
+    dsa_chapter: str = Factory(generate_chapter)
+    ydsa_chapter: str = Factory(generate_chapter)
+    congressional_district: str = Factory(generate_congressional_district)

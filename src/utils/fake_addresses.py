@@ -20,7 +20,7 @@ if MAPBOX_TOKEN_PATH.is_file():
 
 @attrs.define
 class Address:
-    """Represents a complete address along with an optional latitude and longitude"""
+    """Represents a complete address along with an optional latitude and longitude."""
 
     address1: str = attrs.field()
     address2: str = attrs.field()
@@ -28,12 +28,12 @@ class Address:
     state: str = attrs.field()
     zip: str = attrs.field()
     country: str = attrs.field()
-    lat: float
-    lon: float
+    lat: float | None
+    lon: float | None
 
 
-def get_fake_address(zip_code: str = None) -> Address:
-    """Create an entirely made-up address"""
+def get_fake_address(zip_code: str | None = None) -> Address:
+    """Create an entirely made-up address."""
     return Address(
         address1=fake.building_number() + " " + fake.street_name(),
         address2=fake.secondary_address(),
@@ -48,8 +48,8 @@ def get_fake_address(zip_code: str = None) -> Address:
 
 @ratelimit.sleep_and_retry
 @ratelimit.limits(calls=600, period=60)
-def get_random_realistic_address(zip_code: str) -> Address:
-    """Find a random address within a provided zip code"""
+def get_random_realistic_address(zip_code: str) -> Address | None:
+    """Find a random address within a provided zip code."""
     response_forward = geocoder.forward(zip_code, country=["us"])
 
     if response_forward.status_code != 200:

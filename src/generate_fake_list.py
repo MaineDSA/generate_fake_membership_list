@@ -1,4 +1,4 @@
-"""Create test dataset for DSA membership list"""
+"""Create test dataset for DSA membership list."""
 
 import argparse
 import datetime
@@ -11,15 +11,16 @@ import attrs
 import pandas as pd
 from tqdm import tqdm
 
-from utils import fake_addresses
-from utils import fake_members
+from utils import fake_addresses, fake_members
 
 CHAPTER_ZIPS_PATH = Path("./dsa_chapter_zip_codes/chapter_zips.csv")
 MAPBOX_TOKEN_PATH = Path(".mapbox_token")
 
+logger = logging.getLogger(__name__)
+
 
 def parse_arguments() -> argparse.Namespace:
-    """Get the arguments from the command line"""
+    """Get the arguments from the command line."""
     parser = argparse.ArgumentParser(description="Fake DSA Membership List Generator")
 
     # IF YOU CHANGE THESE, BE SURE TO UPDATE README.MD!!
@@ -54,19 +55,19 @@ def parse_arguments() -> argparse.Namespace:
 
 
 def read_chapter_zip_codes(dsa_chapter: str) -> list[str]:
-    """Get the appropriate list of zip codes for the specified DSA Chapter"""
+    """Get the appropriate list of zip codes for the specified DSA Chapter."""
     if not dsa_chapter or not CHAPTER_ZIPS_PATH.is_file():
-        logging.warning("No chapter zip codes loaded, cannot auto-select zip codes based on chapter.")
+        logger.warning("No chapter zip codes loaded, cannot auto-select zip codes based on chapter.")
         return []
 
-    logging.info("Loading chapter zip codes from %s", CHAPTER_ZIPS_PATH)
+    logger.info("Loading chapter zip codes from %s", CHAPTER_ZIPS_PATH)
     df = pd.read_csv(CHAPTER_ZIPS_PATH)
     chapter_zip_codes = list(df.loc[df["chapter"] == dsa_chapter]["zip"])
     return [str(zip_code).zfill(5) for zip_code in chapter_zip_codes]
 
 
-def generate_fake_list(args: argparse.Namespace):
-    """Create a fake membership list based on the specified arguments"""
+def generate_fake_list(args: argparse.Namespace) -> None:
+    """Create a fake membership list based on the specified arguments."""
     chapter_zip_codes = read_chapter_zip_codes(args.dsa_chapter)
 
     missing_zips = []
@@ -87,26 +88,26 @@ def generate_fake_list(args: argparse.Namespace):
         person["ydsa_chapter"] = args.ydsa_chapter
 
     if missing_zips:
-        logging.warning("No realistic address found for %s zip codes:\n%s...", len(missing_zips), missing_zips)
+        logger.warning("No realistic address found for %s zip codes:\n%s...", len(missing_zips), missing_zips)
 
     df = pd.DataFrame(data=people)
     todays_date = datetime.datetime.now().date().strftime("%Y%m%d")
     filename_and_date = f"{args.output}_{todays_date}"
 
-    logging.info("Writing csv file")
+    logger.info("Writing csv file")
     df.to_csv(f"./{filename_and_date}.csv", sep=",", index=False)
 
     output_zip_file = f"./{filename_and_date}.zip"
     if Path(output_zip_file).is_file():
-        logging.info("Deleting file: %s", output_zip_file)
+        logger.info("Deleting file: %s", output_zip_file)
         Path(output_zip_file).unlink()
     with ZipFile(output_zip_file, "x") as list_zip:
-        logging.info("Writing zip file")
+        logger.info("Writing zip file")
         list_zip.write(f"./{filename_and_date}.csv", arcname=f"{args.output}.csv")
 
 
-def main():
-    """Create test dataset for DSA membership list"""
+def main() -> None:
+    """Create test dataset for DSA membership list."""
     logging.basicConfig(level=logging.WARNING, format="%(asctime)s : %(levelname)s : %(message)s")
     args = parse_arguments()
     generate_fake_list(args)
