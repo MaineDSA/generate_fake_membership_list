@@ -32,7 +32,7 @@ jobs:
           python-version: 3.13
           cache: pip
 
-      - uses: install-pinned/uv@87c2872ebb798b99a5ada5669f99ec2680716ae5
+      - uses: install-pinned/uv@05d9162df91b0a72301801afd144d0b8b525e0b3
 
       - run: uv pip install --system .[dev]
 
@@ -69,7 +69,7 @@ jobs:
           python-version: 3.13
           cache: pip
 
-      - uses: install-pinned/uv@87c2872ebb798b99a5ada5669f99ec2680716ae5
+      - uses: install-pinned/uv@05d9162df91b0a72301801afd144d0b8b525e0b3
 
       - run: uv pip install --system .[dev]
 
@@ -117,7 +117,7 @@ jobs:
           python-version: 3.13
           cache: pip
 
-      - uses: install-pinned/uv@87c2872ebb798b99a5ada5669f99ec2680716ae5
+      - uses: install-pinned/uv@05d9162df91b0a72301801afd144d0b8b525e0b3
 
       - run: uv pip install --system .[dev]
 
@@ -155,7 +155,7 @@ jobs:
           python-version: '3.13'
           cache: pip
 
-      - uses: install-pinned/uv@87c2872ebb798b99a5ada5669f99ec2680716ae5
+      - uses: install-pinned/uv@05d9162df91b0a72301801afd144d0b8b525e0b3
 
       - run: uv pip install --system -e .[dev]
 
@@ -195,7 +195,7 @@ jobs:
           python-version: 3.13
           cache: pip
 
-      - uses: install-pinned/uv@87c2872ebb798b99a5ada5669f99ec2680716ae5
+      - uses: install-pinned/uv@05d9162df91b0a72301801afd144d0b8b525e0b3
 
       - run: uv pip install --system .[dev]
 
