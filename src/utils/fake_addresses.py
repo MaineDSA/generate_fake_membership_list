@@ -1,6 +1,6 @@
 """Multiple methods of faking addresses, some relying on API access."""
 
-import random
+import secrets
 from pathlib import Path
 
 import attrs
@@ -52,26 +52,26 @@ def get_random_realistic_address(zip_code: str) -> Address | None:
     """Find a random address within a provided zip code."""
     response_forward = geocoder.forward(zip_code, country=["us"])
 
-    if response_forward.status_code != 200:
+    if not response_forward.ok:
         return None
 
     data_forward = response_forward.json()
     if "features" not in data_forward or len(data_forward["features"]) == 0:
         return None
 
-    random_location = random.choice(data_forward["features"])
+    random_location = secrets.choice(data_forward["features"])
     longitude, latitude = random_location["center"]
 
     # Get a random realistic address based on the random coordinates
     response_reverse = geocoder.reverse(lon=longitude, lat=latitude)
-    if response_reverse.status_code != 200:
+    if not response_reverse.ok:
         return None
 
     address_features = [feature for feature in response_reverse.json()["features"] if "address" in feature["place_type"]]
     if not address_features:
         return None
 
-    random_location = random.choice(address_features)
+    random_location = secrets.choice(address_features)
     if "address" not in random_location:
         return None
 

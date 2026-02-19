@@ -40,7 +40,7 @@ def generate_work_phone() -> str:
     return ""
 
 
-def generate_best_phone(self) -> str:
+def generate_best_phone(self: "Member") -> str:
     return max(
         [
             self.mobile_phone,
@@ -54,31 +54,33 @@ def generate_best_phone(self) -> str:
 
 def generate_join_date() -> str:
     return fake.date_between_dates(  # date must be between 1982-06-01 and today.
-        date_start=(datetime.datetime.strptime("1982-06-01", "%Y-%m-%d").date()),
-        date_end=(datetime.datetime.now().date()),
+        date_start=(datetime.datetime.strptime("1982-06-01", "%Y-%m-%d").astimezone().date()),
+        date_end=(datetime.datetime.now().astimezone().date()),
     ).isoformat()
 
 
-def generate_xdate(self) -> str:
+def generate_xdate(self: "Member") -> str:
     expiration_date = fake.date_between_dates(
         date_start=(
-            datetime.datetime.strptime(self.join_date, "%Y-%m-%d").date() + dateutil.relativedelta.relativedelta(years=1)
+            datetime.datetime.strptime(self.join_date, "%Y-%m-%d").astimezone().date() + dateutil.relativedelta.relativedelta(years=1)
         ),  # date must be at least 1 yr after join date but no more than one year in the future.
-        date_end=(datetime.datetime.now().date() + dateutil.relativedelta.relativedelta(years=1)),
+        date_end=(datetime.datetime.now().astimezone().date() + dateutil.relativedelta.relativedelta(years=1)),
     ).isoformat()
     # Lifetime members have join date of 2099-11-01
     return np.random.choice([expiration_date, "2099-11-01"], p=[0.99, 0.01])
 
 
-def generate_membership_status(self) -> str:
-    if datetime.datetime.strptime(self.xdate, "%Y-%m-%d").date() >= datetime.datetime.now().date():
+def generate_membership_status(self: "Member") -> str:
+    if datetime.datetime.strptime(self.xdate, "%Y-%m-%d").astimezone().date() >= datetime.datetime.now().astimezone().date():
         return "Member in Good Standing"
-    if datetime.datetime.strptime(self.xdate, "%Y-%m-%d").date() > (datetime.datetime.now().date() - dateutil.relativedelta.relativedelta(years=1)):
+    if datetime.datetime.strptime(self.xdate, "%Y-%m-%d").astimezone().date() > (
+        datetime.datetime.now().astimezone().date() - dateutil.relativedelta.relativedelta(years=1)
+    ):
         return "Member"
     return "Lapsed"
 
 
-def generate_memb_status_letter(self) -> str:
+def generate_memb_status_letter(self: "Member") -> str:
     if self.membership_status.find("Member") == 0:
         return "M"
     return "L"
@@ -91,7 +93,7 @@ def generate_membership_type() -> str:
     )
 
 
-def generate_monthly_dues_status(self) -> str:
+def generate_monthly_dues_status(self: "Member") -> str:
     monthly_dues_types = [
         "lapsed",
         "past_due",
@@ -104,7 +106,7 @@ def generate_monthly_dues_status(self) -> str:
     return np.random.choice(monthly_dues_types)
 
 
-def generate_yearly_dues_status(self) -> str:
+def generate_yearly_dues_status(self: "Member") -> str:
     yearly_dues_types = [
         "",
         "never",
@@ -132,7 +134,7 @@ def generate_union_member() -> str:
     )
 
 
-def generate_union_name(self) -> str:
+def generate_union_name(self: "Member") -> str:
     if self.union_member.find("Yes") != 0:
         return ""
     return np.random.choice(
@@ -153,7 +155,7 @@ def generate_union_name(self) -> str:
     )
 
 
-def generate_union_local(self) -> str:
+def generate_union_local(self: "Member") -> str:
     if self.union_member.find("Yes") != 0:
         return ""
     return str(fake.random_int(min=5, max=5999))
@@ -192,7 +194,7 @@ def generate_student_yes_no() -> str:
     )
 
 
-def generate_student_school_name(self) -> str:
+def generate_student_school_name(self: "Member") -> str:
     if self.student_yes_no.find("Yes") != 0:
         return ""
     return fake.school_name()

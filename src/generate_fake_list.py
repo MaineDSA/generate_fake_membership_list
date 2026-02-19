@@ -3,7 +3,7 @@
 import argparse
 import datetime
 import logging
-import random
+import secrets
 from pathlib import Path
 from zipfile import ZipFile
 
@@ -73,7 +73,7 @@ def generate_fake_list(args: argparse.Namespace) -> None:
     missing_zips = []
     people = [attrs.asdict(fake_members.Member()) for _ in range(args.size)]
     for person in tqdm(people, unit="comrades"):
-        zip_code = random.choice(args.zips or chapter_zip_codes)
+        zip_code = secrets.choice(args.zips or chapter_zip_codes)
         if not MAPBOX_TOKEN_PATH.is_file():
             address = fake_addresses.get_fake_address(zip_code)
             person.update(attrs.asdict(address))
@@ -91,7 +91,7 @@ def generate_fake_list(args: argparse.Namespace) -> None:
         logger.warning("No realistic address found for %s zip codes:\n%s...", len(missing_zips), missing_zips)
 
     df = pd.DataFrame(data=people)
-    todays_date = datetime.datetime.now().date().strftime("%Y%m%d")
+    todays_date = datetime.datetime.now().astimezone().date().strftime("%Y%m%d")
     filename_and_date = f"{args.output}_{todays_date}"
 
     logger.info("Writing csv file")
