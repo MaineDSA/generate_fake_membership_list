@@ -1,245 +1,212 @@
 name: Python checks
 
 on:
-    push:
-        branches:
-            - main
-    pull_request:
-    schedule:
-      - cron:  '0 9 * * 1'
-    workflow_dispatch:
+  push:
+    branches:
+      - main
+  pull_request:
+  schedule:
+    - cron: 0 0 * * 1
+  workflow_dispatch:
 
 permissions: read-all
 
 jobs:
-    ruff-format:
-        runs-on: ubuntu-latest
+  ruff-format:
+    runs-on: ubuntu-latest
 
-        permissions:
-            pull-requests: write
+    steps:
+      - uses: step-security/harden-runner@e3f713f2d8f53843e71c69a996d56f51aa9adfb9
+        with:
+          disable-sudo: true
+          egress-policy: block
+          allowed-endpoints: >
+            files.pythonhosted.org:443
+            github.com:443
+            pypi.org:443
 
-        steps:
-            - name: Harden runner
-              uses: step-security/harden-runner@5ef0c079ce82195b2a36a210272d6b661572d83e
-              with:
-                  disable-sudo: true
-                  egress-policy: block
-                  allowed-endpoints: >
-                      files.pythonhosted.org:443
-                      github.com:443
-                      pypi.org:443
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd
 
-            - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd
+      - uses: actions/setup-python@83679a892e2d95755f2dac6acb0bfd1e9ac5d548
+        with:
+          python-version: 3.13
+          cache: pip
 
-            - name: Set up Python 3.13
-              uses: actions/setup-python@a309ff8b426b58ec0e2a45f0f869d46889d02405
-              with:
-                  python-version: '3.13'
-                  cache: pip
+      - uses: install-pinned/uv@87c2872ebb798b99a5ada5669f99ec2680716ae5
 
-            - name: Install uv
-              uses: install-pinned/uv@87c2872ebb798b99a5ada5669f99ec2680716ae5
+      - run: uv pip install --system .[dev]
 
-            - name: Install module and dependencies
-              run: |
-                  uv pip install --system -e .[dev]
+      - id: cache-ruff
+        uses: actions/cache@cdf6c1fa76f9f475f3d7449005a359c84ca0f306
+        with:
+          path: .ruff_cache
+          key: ruff-${{ hashFiles('pyproject.toml') }}
 
-            - id: cache-ruff
-              uses: actions/cache@cdf6c1fa76f9f475f3d7449005a359c84ca0f306
-              with:
-                  path: .ruff_cache
-                  key: ${{ runner.os }}-ruff-3.13-${{ hashFiles('pyproject.toml') }}
+      - id: run-ruff
+        run: ruff format --diff .
 
-            - name: Run ruff format
-              id: run-ruff
-              run: |
-                  ruff format --diff .
+  ruff-check:
+    runs-on: ubuntu-latest
 
-    ruff-check:
-        runs-on: ubuntu-latest
+    permissions:
+      security-events: write
 
-        permissions:
-            pull-requests: write
-            security-events: write
+    steps:
+      - uses: step-security/harden-runner@e3f713f2d8f53843e71c69a996d56f51aa9adfb9
+        with:
+          disable-sudo: true
+          egress-policy: block
+          allowed-endpoints: >
+            api.github.com:443
+            files.pythonhosted.org:443
+            github.com:443
+            pypi.org:443
 
-        steps:
-            - name: Harden runner
-              uses: step-security/harden-runner@5ef0c079ce82195b2a36a210272d6b661572d83e
-              with:
-                  disable-sudo: true
-                  egress-policy: block
-                  allowed-endpoints: >
-                      api.github.com:443
-                      files.pythonhosted.org:443
-                      github.com:443
-                      pypi.org:443
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd
 
-            - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd
+      - uses: actions/setup-python@83679a892e2d95755f2dac6acb0bfd1e9ac5d548
+        with:
+          python-version: 3.13
+          cache: pip
 
-            - name: Set up Python 3.13
-              uses: actions/setup-python@a309ff8b426b58ec0e2a45f0f869d46889d02405
-              with:
-                  python-version: '3.13'
-                  cache: pip
+      - uses: install-pinned/uv@87c2872ebb798b99a5ada5669f99ec2680716ae5
 
-            - name: Install uv
-              uses: install-pinned/uv@87c2872ebb798b99a5ada5669f99ec2680716ae5
+      - run: uv pip install --system .[dev]
 
-            - name: Install module and dependencies
-              run: |
-                  uv pip install --system -e .[dev]
+      - id: cache-ruff
+        uses: actions/cache@cdf6c1fa76f9f475f3d7449005a359c84ca0f306
+        with:
+          path: .ruff_cache
+          key: ruff-${{ hashFiles('pyproject.toml') }}
 
-            - id: cache-ruff
-              uses: actions/cache@cdf6c1fa76f9f475f3d7449005a359c84ca0f306
-              with:
-                  path: .ruff_cache
-                  key: ${{ runner.os }}-ruff-3.13-${{ hashFiles('pyproject.toml') }}
+      - id: run-ruff-sarif
+        run: |
+          ruff check --output-format=sarif -o results.sarif .
 
-            - name: Generate SARIF file with ruff check
-              id: run-ruff-sarif
-              run: |
-                  ruff check --output-format=sarif -o results.sarif .
+      - uses: github/codeql-action/upload-sarif@b20883b0cd1f46c72ae0ba6d1090936928f9fa30
+        if: ( success() || failure() ) && contains('["success", "failure"]', steps.run-ruff-sarif.outcome)
+        with:
+          sarif_file: results.sarif
 
-            - name: Upload SARIF file to code scanning
-              if: ( success() || failure() ) && contains('["success", "failure"]', steps.run-ruff-sarif.outcome)
-              uses: github/codeql-action/upload-sarif@9e907b5e64f6b83e7804b09294d44122997950d6
-              with:
-                  sarif_file: results.sarif
+      - id: run-ruff
+        if: failure() && contains('["failure"]', steps.run-ruff-sarif.outcome)
+        run: |
+          ruff check --output-format=github .
 
-            - name: Run ruff
-              id: run-ruff
-              if: ( success() || failure() ) && contains('["success", "failure"]', steps.run-ruff-sarif.outcome)
-              run: |
-                  ruff check --output-format=github .
+  bandit:
+    runs-on: ubuntu-latest
 
-    bandit:
-        runs-on: ubuntu-latest
+    permissions:
+      security-events: write
 
-        permissions:
-            security-events: write
+    steps:
+      - uses: step-security/harden-runner@e3f713f2d8f53843e71c69a996d56f51aa9adfb9
+        with:
+          disable-sudo: true
+          egress-policy: block
+          allowed-endpoints: >
+            api.github.com:443
+            files.pythonhosted.org:443
+            github.com:443
+            pypi.org:443
 
-        steps:
-            - name: Harden runner
-              uses: step-security/harden-runner@5ef0c079ce82195b2a36a210272d6b661572d83e
-              with:
-                  disable-sudo: true
-                  egress-policy: block
-                  allowed-endpoints: >
-                      api.github.com:443
-                      files.pythonhosted.org:443
-                      github.com:443
-                      pypi.org:443
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd
 
-            - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd
+      - uses: actions/setup-python@83679a892e2d95755f2dac6acb0bfd1e9ac5d548
+        with:
+          python-version: 3.13
+          cache: pip
 
-            - name: Set up Python 3.13
-              uses: actions/setup-python@a309ff8b426b58ec0e2a45f0f869d46889d02405
-              with:
-                  python-version: '3.13'
-                  cache: pip
+      - uses: install-pinned/uv@87c2872ebb798b99a5ada5669f99ec2680716ae5
 
-            - name: Install uv
-              uses: install-pinned/uv@87c2872ebb798b99a5ada5669f99ec2680716ae5
+      - run: uv pip install --system .[dev]
 
-            - name: Install module and dependencies
-              run: |
-                  uv pip install --system -e .[dev]
+      - id: run-bandit-sarif
+        run: |
+          bandit --confidence-level 'medium' --severity-level 'medium' --recursive 'src' --format 'sarif' --output 'results.sarif'
 
-            - name: Run bandit scan
-              run: |
-                  bandit --confidence-level=high --severity-level=high --configfile 'pyproject.toml' --format sarif --output results.sarif --recursive .
+      - uses: github/codeql-action/upload-sarif@b20883b0cd1f46c72ae0ba6d1090936928f9fa30
+        if: ( success() || failure() ) && contains('["success", "failure"]', steps.run-bandit-sarif.outcome)
+        with:
+          sarif_file: results.sarif
 
-            - name: Upload SARIF file to code scanning
-              uses: github/codeql-action/upload-sarif@9e907b5e64f6b83e7804b09294d44122997950d6
-              with:
-                  sarif_file: results.sarif
+      - id: run-bandit
+        if: failure() && contains('["failure"]', steps.run-bandit-sarif.outcome)
+        run: |
+          bandit --confidence-level 'medium' --severity-level 'medium' --recursive 'src'
 
-    mypy:
-        runs-on: ubuntu-latest
+  mypy:
+    runs-on: ubuntu-latest
 
-        steps:
-            - name: Harden runner
-              uses: step-security/harden-runner@5ef0c079ce82195b2a36a210272d6b661572d83e
-              with:
-                  disable-sudo: true
-                  egress-policy: block
-                  allowed-endpoints: >
-                      files.pythonhosted.org:443
-                      github.com:443
-                      pypi.org:443
+    steps:
+      - uses: step-security/harden-runner@e3f713f2d8f53843e71c69a996d56f51aa9adfb9
+        with:
+          disable-sudo: true
+          egress-policy: block
+          allowed-endpoints: >
+            files.pythonhosted.org:443
+            github.com:443
+            pypi.org:443
 
-            - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd
 
-            - name: Set up Python 3.13
-              uses: actions/setup-python@a309ff8b426b58ec0e2a45f0f869d46889d02405
-              with:
-                  python-version: '3.13'
-                  cache: pip
+      - uses: actions/setup-python@83679a892e2d95755f2dac6acb0bfd1e9ac5d548
+        with:
+          python-version: '3.13'
+          cache: pip
 
-            - name: Install uv
-              uses: install-pinned/uv@87c2872ebb798b99a5ada5669f99ec2680716ae5
+      - uses: install-pinned/uv@87c2872ebb798b99a5ada5669f99ec2680716ae5
 
-            - name: Install module and dependencies
-              run: |
-                  uv pip install --system -e .[dev]
+      - run: uv pip install --system -e .[dev]
 
-            - id: cache-mypy
-              uses: actions/cache@cdf6c1fa76f9f475f3d7449005a359c84ca0f306
-              with:
-                  path: .mypy_cache
-                  key: ${{ runner.os }}-mypy-${{ hashFiles('pyproject.toml') }}
+      - id: cache-mypy
+        uses: actions/cache@cdf6c1fa76f9f475f3d7449005a359c84ca0f306
+        with:
+          path: .mypy_cache
+          key: ${{ runner.os }}-mypy-${{ hashFiles('pyproject.toml') }}
 
-            - name: Run mypy
-              run: |
-                  mypy .
+      - run: mypy .
 
-    pre-commit:
-        runs-on: ubuntu-latest
+  pre-commit:
+    runs-on: ubuntu-latest
+    needs:
+      - bandit
+      - ruff-format
+      - ruff-check
 
-        needs:
-            - ruff-format
-            - ruff-check
-            - bandit
+    permissions:
+      contents: write
 
-        permissions:
-            contents: write
+    steps:
+      - uses: step-security/harden-runner@e3f713f2d8f53843e71c69a996d56f51aa9adfb9
+        with:
+          disable-sudo: true
+          egress-policy: block
+          allowed-endpoints: >
+            files.pythonhosted.org:443
+            github.com:443
+            proxy.golang.org:443
+            pypi.org:443
 
-        steps:
-            - name: Harden runner
-              uses: step-security/harden-runner@5ef0c079ce82195b2a36a210272d6b661572d83e
-              with:
-                  disable-sudo: true
-                  egress-policy: block
-                  allowed-endpoints: >
-                      files.pythonhosted.org:443
-                      github.com:443
-                      proxy.golang.org:443
-                      pypi.org:443
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd
 
-            - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd
+      - uses: actions/setup-python@83679a892e2d95755f2dac6acb0bfd1e9ac5d548
+        with:
+          python-version: 3.13
+          cache: pip
 
-            - name: Set up Python 3.13
-              uses: actions/setup-python@a309ff8b426b58ec0e2a45f0f869d46889d02405
-              with:
-                  python-version: 3.13
-                  cache: pip
+      - uses: install-pinned/uv@87c2872ebb798b99a5ada5669f99ec2680716ae5
 
-            - name: Install uv
-              uses: install-pinned/uv@87c2872ebb798b99a5ada5669f99ec2680716ae5
+      - run: uv pip install --system .[dev]
 
-            - name: Install module and dependencies
-              run: |
-                  uv pip install --system -e .[dev]
+      - id: cache-pre-commit
+        uses: actions/cache@cdf6c1fa76f9f475f3d7449005a359c84ca0f306
+        with:
+          path: .pre-commit-cache
+          key: pre-commit-${{ hashFiles('.pre-commit-config.yaml') }}-${{ hashFiles('pyproject.toml') }}
 
-            - id: cache-pre-commit
-              uses: actions/cache@cdf6c1fa76f9f475f3d7449005a359c84ca0f306
-              with:
-                  path: .pre-commit-cache
-                  key: ${{ runner.os }}-pre-commit-3.13
-
-            - name: Run pre-commit
-              run: |
-                  pre-commit install
-                  pre-commit run --all-files
-              env:
-                  PRE_COMMIT_HOME: .pre-commit-cache
+      - run: |
+          pre-commit install
+          pre-commit run --all-files
+        env:
+          PRE_COMMIT_HOME: .pre-commit-cache
