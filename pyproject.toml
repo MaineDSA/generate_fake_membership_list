@@ -2,20 +2,20 @@
 name = "fake_membership_list"
 version = "1.0.0"
 readme = "README.md"
-requires-python = ">=3.10"
+requires-python = ">=3.11"
 license = { "file" = "LICENSE" }
 authors = [{ "name" = "Ramona T", "email" = "ramona.t.dsa@pm.me" }]
 urls = { "GitHub" = "https://github.com/MaineDSA/fake_membership_list" }
 dependencies = [
-    "attrs==25.4.0",
-    "faker_education==1.2.1",
-    "Faker==40.4.0",
-    "mapbox==0.18.1",
-    "numpy==2.4.2",
-    "pandas==3.0.1",
-    "python-dateutil==2.9.0.post0",
-    "ratelimit==2.2.1",
-    "tqdm==4.67.3",
+    "attrs~=25.4.0",
+    "faker_education~=1.2.1",
+    "Faker~=40.5.1",
+    "mapbox~=0.18.1",
+    "numpy~=2.4.2",
+    "pandas~=3.0.1",
+    "python-dateutil~=2.9.0.post0",
+    "ratelimit~=2.2.1",
+    "tqdm~=4.67.3",
 ]
 
 [build-system]
@@ -30,20 +30,20 @@ dev = [
     {include-group = "types"},
 ]
 lint = [
-    "ruff==0.15.1",
+    "ruff==0.15.4",
     "ssort==0.16.0",
 ]
 pre-commit = [
     "pre-commit==4.5.1",
 ]
 security = [
-    "bandit[sarif]==1.9.3",
+    "bandit[sarif]==1.9.4",
 ]
 types = [
     "mypy==1.19.1",
-    "pandas-stubs==2.3.3.260113",
-    "types-python-dateutil==2.9.0.20260124",
-    "types-tqdm==4.67.3.20260205",
+    "pandas-stubs~=3.0.0.260204",
+    "types-python-dateutil~=2.9.0.20260302",
+    "types-tqdm~=4.67.3.20260303",
 ]
 
 [tool]
