@@ -40,7 +40,7 @@ security = [
     "bandit[sarif]==1.9.4",
 ]
 types = [
-    "mypy==1.19.1",
+    "mypy==1.20.0",
     "pandas-stubs~=3.0.0.260204",
     "types-python-dateutil~=2.9.0.20260302",
     "types-tqdm~=4.67.3.20260303",
