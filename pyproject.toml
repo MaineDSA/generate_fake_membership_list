@@ -7,7 +7,7 @@ license = { "file" = "LICENSE" }
 authors = [{ "name" = "Ramona T", "email" = "ramona.t.dsa@pm.me" }]
 urls = { "GitHub" = "https://github.com/MaineDSA/fake_membership_list" }
 dependencies = [
-    "attrs~=25.4.0",
+    "attrs~=26.1.0",
     "faker_education~=1.2.1",
     "Faker~=40.5.1",
     "mapbox~=0.18.1",
