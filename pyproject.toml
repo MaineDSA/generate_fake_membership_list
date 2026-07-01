@@ -15,7 +15,7 @@ dependencies = [
     "pandas~=3.0.1",
     "python-dateutil~=2.9.0.post0",
     "ratelimit~=2.2.1",
-    "tqdm~=4.67.3",
+    "tqdm~=4.68.3",
 ]
 
 [build-system]
