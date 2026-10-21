@@ -1,9 +1,9 @@
 """Create test dataset for DSA membership list."""
 
 import argparse
-import datetime
 import logging
 import secrets
+from datetime import datetime
 from pathlib import Path
 from zipfile import ZipFile
 
@@ -91,7 +91,7 @@ def generate_fake_list(args: argparse.Namespace) -> None:
         logger.warning("No realistic address found for %s zip codes:\n%s...", len(missing_zips), missing_zips)
 
     df = pd.DataFrame(data=people)
-    todays_date = datetime.datetime.now().astimezone().date().strftime("%Y%m%d")
+    todays_date = datetime.now().astimezone().date().strftime("%Y%m%d")
     filename_and_date = f"{args.output}_{todays_date}"
 
     logger.info("Writing csv file")

@@ -4,7 +4,7 @@ Create a dict of information for a single fake DSA member.
 Key member info to the column names found in nationally-provided membership lists, with the exception of an address.
 """
 
-import datetime
+from datetime import datetime
 
 import dateutil
 import faker_education
@@ -54,28 +54,26 @@ def generate_best_phone(self: "Member") -> str:
 
 def generate_join_date() -> str:
     return fake.date_between_dates(  # date must be between 1982-06-01 and today.
-        date_start=(datetime.datetime.strptime("1982-06-01", "%Y-%m-%d").astimezone().date()),
-        date_end=(datetime.datetime.now().astimezone().date()),
+        date_start=(datetime.strptime("1982-06-01", "%Y-%m-%d").astimezone().date()),
+        date_end=(datetime.now().astimezone().date()),
     ).isoformat()
 
 
 def generate_xdate(self: "Member") -> str:
     expiration_date = fake.date_between_dates(
         date_start=(
-            datetime.datetime.strptime(self.join_date, "%Y-%m-%d").astimezone().date() + dateutil.relativedelta.relativedelta(years=1)
+            datetime.strptime(self.join_date, "%Y-%m-%d").astimezone().date() + dateutil.relativedelta.relativedelta(years=1)
         ),  # date must be at least 1 yr after join date but no more than one year in the future.
-        date_end=(datetime.datetime.now().astimezone().date() + dateutil.relativedelta.relativedelta(years=1)),
+        date_end=(datetime.now().astimezone().date() + dateutil.relativedelta.relativedelta(years=1)),
     ).isoformat()
     # Lifetime members have join date of 2099-11-01
     return np.random.choice([expiration_date, "2099-11-01"], p=[0.99, 0.01])
 
 
 def generate_membership_status(self: "Member") -> str:
-    if datetime.datetime.strptime(self.xdate, "%Y-%m-%d").astimezone().date() >= datetime.datetime.now().astimezone().date():
+    if datetime.strptime(self.xdate, "%Y-%m-%d").astimezone().date() >= datetime.now().astimezone().date():
         return "Member in Good Standing"
-    if datetime.datetime.strptime(self.xdate, "%Y-%m-%d").astimezone().date() > (
-        datetime.datetime.now().astimezone().date() - dateutil.relativedelta.relativedelta(years=1)
-    ):
+    if datetime.strptime(self.xdate, "%Y-%m-%d").astimezone().date() > (datetime.now().astimezone().date() - dateutil.relativedelta.relativedelta(years=1)):
         return "Member"
     return "Lapsed"
 
